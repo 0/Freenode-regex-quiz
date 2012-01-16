@@ -1,0 +1,21 @@
+[11_unused]
+title=Credit cards
+description=We are having problems processing your credit card details. Can you help us varify them? I am sure 064315-3658-1154-9985 and 064444-5555-6666-7777 are valid. Our customers use Visa, Mastercard and American Express.
+finalMessage=All I need now is your credit card number and expiry date. On wards and upwards!
+sub=0
+tests=27
+testMtime=1326538652
+total=3
+success=1
+shortest=Lindrian 132
+
+[12_unused]
+title=Match an URL (Simplified)
+description=Verify that a given URL is valid. URLs are in reality very complicated but it is still good practice. You could start by trying to match 6http://www.google.com/. We will, for the sake of making this manageable, only allow 3alphanumeric, 3dashes and 3underscores in the URL (except for the 6path).
+finalMessage=Nice work! Remember that this regular expression is severely limited as URLs are much more complicated than this.
+sub=0
+tests=41
+testMtime=1326541746
+total=1
+success=1
+shortest=Lindrian 60

@@ -1,0 +1,34 @@
+; Task 10: Broken keyboard
+; Remove repeated input
+
+aa
+aa
+Don't replace strings that don't fit the description.
+
+aa aa aa
+aa aa aa
+Don't replace strings that don't fit the description.
+
+abc
+abc
+You're removing the wrong characters!
+
+aaa
+a
+You are not removing the duplicate chars properly! Remember, I want to keep the character I initially typed. Only remove the duplicates!
+
+aaabbbccczzzz!!!***
+abczz!*
+You're not removing all types of repeated characters!
+
+%%%aaammm
+%am
+You're not removing all the duplicated characters! My keyboard might jam several 06tttimes in a sente06nnnce.
+
+hHh hhh HHH KKk
+hHh h H KKk
+You need to remember that repeated characters are case sensitive!
+
+HHHHKKKKKK
+HHKK
+Capital letters can also occur in the string.

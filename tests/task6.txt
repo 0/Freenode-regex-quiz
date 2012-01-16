@@ -1,0 +1,180 @@
+; Task 6: Match an e-mail (simplified)
+; Verify an e-mail address.
+;
+; History
+; =======
+; 2010-07-27
+;   * Test for "!#$%&'*+-/=?^_`{|}~".
+;   * Test for upper case and digits.
+;   * Test against whitespace.
+;   * Dropped the hyphen and subdomain in the first tests.
+;   * Updated the message on a few test cases.
+; 2010-07-26
+;   * Initial release
+
+; === Initial tests ===
+!= 1
+localpart@example.com
+An e-mail address is: 6local-part 3"@" 6domain
+
+!= 1
+LOCALPART@EXAMPLE.COM
+You must allow upper case letters. The 3"/i" (ignore case) modifier is recommended.
+
+!= 1
+0123456789@site0123456789.com
+You must allow digits.
+
+!= 1
+localpart@foo.example.com
+The domain must be allowed to contain subdomains. For example: 3"x@foo.example.com"
+
+!= 0
+@example.com
+Don't match addresses without a local-part.
+
+; === Domain tests ===
+!= 0
+x@com
+Don't match domains without a top-level domain (TLD).
+
+!= 0
+x@.example.com
+6.example.com is not a valid domain.
+
+!= 0
+x@foo..example.com
+Two dots in a row must not be allowed in a domain name.
+
+!= 1
+x@example.museum
+The TLD can be up to 6 characters long.
+
+!= 0
+x@example.loooong
+The TLD is only allowed to be up to 6 characters long. Hint: if you are not already using anchors, you should start now.
+
+!= 0
+x@example.x
+The TLD is must be at least 2 character long.
+
+!= 0
+x@-x.example.com
+The pieces of a domain must begin with alphabetic characters.
+
+!= 1
+x@x.com
+The domain name may be one (1) character long.
+
+!= 0
+x@x-.example.com
+The pieces of a domain must not end with a hyphen.
+
+!= 0
+x@xn_foo.example.com
+3_ is not allowed in a domain name.
+
+!= 0
+x@_foo.example.com
+3_ is not allowed in a domain name.
+
+; International domains
+!= 1
+x@xn--foo.example.com
+Two hyphens in a row must be allowed.
+
+; === Local part tests ===
+!= 0
+.@example.com
+3. is not an allowed local-part.
+
+!= 0
+x.@example.com
+3x. is not an allowed local-part.
+
+!= 0
+.x@example.com
+3.x is not an allowed local-part
+
+!= 0
+x..x@example.com
+Two dots in a row is not allowed in the local-part.
+
+!= 1
+x.x@example.com
+6Dots must be allowed in the local part.
+
+; Required characters
+!= 1
+a!#$%&'*+-/=?^_`{|}~b@example.com
+3!#$%&'*+-/=?^_`{|}~ must be allowed in the local-part.
+
+; Whitespace
+!= 0
+a b@example.com
+Whitespace must not be allowed in the local-part.
+
+!= 0
+a	b@example.com
+Whitespace must not be allowed in the local-part.
+
+; Disallowed symbols
+!= 0
+a(b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a)b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a(b)c@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a<b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a>b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a<b>c@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a@b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a,b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a;b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a:b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a\b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a"b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a[b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a]b@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a[b]c@example.com
+3()<>@,;:\"[] must not be allowed in the local-part.

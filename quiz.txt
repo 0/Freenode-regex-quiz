@@ -1,0 +1,211 @@
+Task order:
+	1: Word Boundaries
+	2: Capitalize
+	3: Uppercase Consonants
+	4: Retreive Numbers
+	5: Whitespaces
+	6: Match a e-mail (simplified)
+	8: Html Tags
+	7: Validate an IP
+	9: Validate floating numbers
+	10: Broken keyboard
+	11: Validate credit card numbers
+	12: Followed by #
+	13: Validate an URL
+	14: Spam filter
+	15: Every other digit
+	16: Repeated words
+	17: start before end
+	18: Not surrounded by digits
+	19: The thousands
+	20: Quoted text with escapes
+	21: Match * inside square brackets
+	22: Outermost Brackets
+
+Task 1: Word Boundaries
+	Strings: 
+		word			valid
+		aworda			invalid
+		thisisnotaword		invalid
+		wordnot			invalid
+		wor			invalid
+		wOrdd			invalid
+		WORD			valid
+		WORDz			invalid
+		zWORD			invalid
+	Valid regex:
+		/\bword\b/i
+		
+Task 2: Capitalize
+	Strings:
+		I am a cat		invalid (questionable)
+		this is invalid		invalid
+		i am a cat		valid -> I am a cat
+		capitalize this i	valid -> capitalize this I
+		abc i abc		valid -> abc I abc
+		ii i ii			valid -> ii I ii
+		i			valid -> I
+		abc i abc i abc i abc	valid -> abc I abc I abc I abc
+	Valid regsub:
+		/\bi\b/g I
+		
+Task 3: Uppercase Consonants
+	Strings:
+		BCDFGHJKLMNPQRSTVXZ	valid
+	Valid regex:
+		/[B-DF-HJ-NP-TV-Z]/g
+		
+Task 4: Retreive Numbers
+	Strings:
+		12345			valid -> 12345
+		12abc12			valid -> 12, 12
+		1a2b3			valid -> 1, 2, 3
+	Valid Regex:
+		/(\d+)/g
+		
+Task 5: Whitespaces
+	Strings:
+		??
+	Valid regex:
+		/[  ]{4}/S
+		
+Task 6: Match a e-mail (simplified)
+	Strings:
+		@someone.com		invalid
+		a.@com			invalid
+		.a@.com			invalid
+		.@.com			invalid
+		.@abc.com		invalid
+		email@.a.com		invalid
+		mail@mail.com		valid
+		()[]\;:,<>@example.com	invalid
+		A@b@c@example.com	invalid
+		abc@abc.loooong		invalid
+		abc@abc.abc.com		valid
+	Valid regex:
+		/^[\w.%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
+		
+Task 7: Validate an IP
+	Strings:
+		too lazy for this one lol
+	Valid regex:
+		/^(?:(?:[01]?\d?\d|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d?\d|2[0-4]\d|25[0-5])$/
+	
+Task 8: HTML Tags
+	Strings:
+		...
+	Valid regex:
+		/<[^>]*|[^<]*>/g
+			
+Task 9: Validate floating numbers
+	Strings:
+		1.0			valid
+		12,123			valid
+		+10			valid
+		-0.1			valid
+		-.1			valid
+		-1.5e20			valid
+		+50e1			valid
+		+20.0			valid
+		+1.01e10		valid
+		+1.			invalid
+		+1			valid
+		.+1			invalid
+		1.4e10			valid
+		1.4.e10			invalid
+		.			invalid
+		.e0			invalid
+	Valid regex:
+		/^[+-]?(?:\d+(?:\.(?!$))?|\.)\d*(?:e\d+)?$/ need update
+		
+Task 10: Broken keyboard
+	Strings:
+		...
+	Valid regex:
+		/(.)\1\1/
+
+REMOVED Task 11: Validate credit card numbers
+	Strings:
+		...
+	Valid regex:
+		...
+		
+Task 12: Followed by #
+	Strings:
+		...
+	Valid regex:
+		/(.)(?=#)/g
+
+REMOVED Task 13: Validate an URL
+	Strings:
+		...
+	Valid regex:
+		...
+
+Task 14: Spam filter
+	Strings:
+		...
+	Valid regex:
+		/^(?!.*(filter|mirc|not allowed)).*(?:http:\/\/|www\.|porn|credit card)/i
+		
+Task 15: Every other digit
+	Strings:
+		...
+	Valid regsub:
+		/\G((?:.\D)*.)\d/g \1*
+	
+Task 16: Repeated words
+	Strings:
+		...
+	Valid regex:
+		/(\b\w{4,}\b)(?=(?:.*\b\1\b){2})(?!(.*\b\1\b){3})/ig
+
+Task 17: start before end
+	Strings:
+		...
+	Valid regex:
+		/^(?:(?!end).)*start/
+		
+Task 18: Not surrounded by digits
+	Strings:
+		...
+	Valid regex:
+		/(?<!\d)\.|\.(?!\d)/g
+		
+Task 19: The thousands
+	Strings:
+		100			invalid
+		1000			valid -> 1,000
+		9999			valid -> 9,999
+		12345			valid -> 12,345
+		9999999999999999	valid -> 9,999,999,999,999,999
+	Valid regsub:
+		/(\d)(?=(\d{3})+\b)/ \1,
+		
+Task 20: Quoted text with escapes
+	Strings:
+		...
+	Valid regex:
+		/^"((?>\\.|[^"])*)"$/
+		
+Task 21: Match * inside square brackets
+	Strings:
+		...
+	Valid regex/regsub:
+		/^([^[]+)|([^]]+)$|(\][^[]+\[)|\*/ \1\2\3
+		/(?(?=^)[^]]*\[\K|(?(?=\])..*?\[\K|\*))/g
+		
+Task 22: Outermost Brackets
+	Strings: 
+		...
+	Valid regex:
+		/(\((?>[^()]+|(?R))+\))/g
+	
+Task 23: Validate string with X lower case and X upper case characters.
+
+Left to document:
+	Match regex
+	Match a valid mathematical expression
+	Highlight text with colors (maintaining current color codes)
+	Palindromes
+	Ignoring punctuation

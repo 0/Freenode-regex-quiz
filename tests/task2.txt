@@ -1,0 +1,34 @@
+; Task 2: Capitalize
+; Replace the word i with I.
+
+i
+I
+You are not replacing 3i at all! Start with 3s/i/I/
+
+big
+big
+You are replacing 3i in the middle of words. eg: "3this is a string" -> "3th6I3s 6I3s a str6I3ng". Use your new learned word boundary skills!
+
+I am a cat
+I am a cat
+You are replacing 3I with 3i. That's the complete opposite of what we want!
+
+i am a cat
+I am a cat
+You are not replacing 3i at the beginning of the string.
+
+what am i
+what am I
+You are not replacing 3i at the end of the string.
+
+i'm
+I'm
+You're not replacing the 3i in "3i'm".
+
+abc i abc i abc i abc
+abc I abc I abc I abc
+You are not replacing all 3i's. 3I would very much l6ike to cap6ital6ize every 3i6 6in my sentences!
+
+i i i
+I I I
+You are not replacing all 3i's in a row. Some people stuttet, are they not allowed to capitalize their letters?

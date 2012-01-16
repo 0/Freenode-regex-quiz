@@ -1,0 +1,38 @@
+; Task 4: Retreive Numbers
+; Match all integers in the string.
+
+== 0
+1
+Failed to match a single digit.
+
+!= 0
+afkuhguhw_iugh
+Match numbers, not letters.
+
+!= 1
+12345
+Match longer numbers too.
+
+== 0
+abc12abc12abc
+Failed to match numbers embedded in text.
+
+== 1
+abc12abc12abc
+Forgot /g?
+
+!= 2
+abc12abc12abc
+Failed to match two numbers separated by other symbols.
+
+!= 3
+1a2b3
+Failed to match numbers separated by a single non-digit.
+
+!= 1
+34567890958473656489033209384767389209
+Numbers can be of any length.
+
+!= 2
+59849875902348977385394875938475987.9898347598276491824
+Numbers can be of any length.

@@ -1,0 +1,34 @@
+; Task 8: HTML Tags
+; Strip all HTML tags from a string.
+
+uhgiuhergiueh
+uhgiuhergiueh
+Don't touch strings without tags.
+
+hsdfh<bufhk>dhfhdk
+hsdfhdhfhdk
+A tag is a started by a 3"<", and ended by a 3">".
+
+hsdfh<bufhk>kfhgk<jhfk>dhfhdk
+hsdfhkfhgkdhfhdk
+Forgot 3/g?
+
+hsdfh</bufhk>dhfhdk
+hsdfhdhfhdk
+Closing tags start with 3"</", and ends with 3">".
+
+dkjshfkj<>jhfj
+dkjshfkjjhfj
+Also remove empty tags 3"<>".
+
+hfajshdf>jfhsdhf<sfhsjkdf
+jfhsdhf
+Tags can sometimes span multiple lines. Also remove 6partial tags.
+
+hfajshdf>jfh<jk>sdhf<sfhsjkdf
+jfhsdhf
+Both 6complete and 6partial tags can appear on a single line.
+
+asjf<fashdf faf="fajhdf">hskjfh
+asjfhskjfh
+A tag can contain more than just letters.

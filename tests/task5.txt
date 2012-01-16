@@ -1,0 +1,18 @@
+; Task 5: Whitespaces
+; Check if there are 4 or more whitespace characters in a row.
+
+!= 0
+x
+Don't match strings without whitespaces.
+
+> 0
+x   x
+Don't match when there are only three spaces.
+
+== 1
+xx    xx    xx
+No 3/g here.
+
+!= 1
+				
+Tabs also count.

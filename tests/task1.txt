@@ -1,0 +1,26 @@
+; Task 1: Word Boundaries
+; Match the word 'word' anywhere in the input string.
+
+== 0
+word
+You are not even matching 6word. Use the example given in the task description.
+
+!= 1
+WoRd
+The string is case insensitive! 3WORD or 3word is the same 6word.
+
+!= 0
+w wo wor o or ord r rd d
+No shortcuts, you have to match 6word in full.
+
+!= 0
+xord wxrd woxd worx
+Your expression is allowing other characters to be substituted into the word. 6xord is not the same as 3word.
+
+!= 0
+sword words swords
+Your expression is matching 6word in the middle of words. 3aword is not the same as 6word. You need to read 2http://www.regular-expressions.info/wordboundaries.html.
+
+== 0
+a word a
+You are not matching all strings which contain 6word.

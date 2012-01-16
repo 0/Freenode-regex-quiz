@@ -1,0 +1,34 @@
+; Task 3: Uppercase Consonants
+; Count the number of uppercase consonants in the string.
+
+!= 1
+T
+Hmm. Try to make your pattern match 3T, atleast. Read 12http://www.regular-expressions.info/charclass.html
+
+!= 0
+t
+Ouch. You could atleast try to make your pattern only match uppercase characters! Read 12http://www.regular-expressions.info/charclass.html
+
+!= 0
+...½§1234567890!"#¤%&/()=?`´@£$€{[]}\~*'¨-_.,;:><|
+You are not only counting consonants. Is 3# a consonant in your book?
+
+!= 0
+aeuioAEUIO
+You are also counting vowels. 6aeuio are vowels.
+
+!= 0
+bcdfghjklmnpqrstvwxyz
+You are also counting lowercase consontants. Remember we only want 3uppercase consonants.
+
+== 1
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+You forgot the 6/g flag. Remember we are supposed to 3count all uppercase consonants, without the 6/g flag that won't be possible!
+
+> 21
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+Alphabet only contains6 21 consonants.
+
+< 21
+ABCDEFGHIJKLMNOPQRSTUVWXYZ
+You are not counting all consonants. There is a total of6 21 consonants in the alphabet.
