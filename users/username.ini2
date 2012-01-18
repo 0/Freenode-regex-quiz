@@ -1,8 +1,0 @@
-[info]
-password=5f4dcc3b5aa765d61d8327deb882cf99
-
-
-[task1]
-last=/last attempt/
-final=/valid expression/
-attempts=1000
