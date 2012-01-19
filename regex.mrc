@@ -109,6 +109,9 @@ alias desafe {
 }
 
 alias -l regex.msg2 {
+  if ($isid) {
+    echo -a ok
+  }
   msg $1-
   return
   :error

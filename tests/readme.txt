@@ -21,3 +21,15 @@ Real life example
 
 regml: "match against this string", 0 == 2, 1 === "string", 2 === "this"
 You are not setting 2 backrefs where the first equals "string" and the other "this".
+
+
+You can also include code in the messages (and infact, in the code when you compare things). For example
+
+!= 1
+test
+Here is a message with a $iif($true,if conditional, wtf) $+ .
+
+-----
+
+Added feature to add substitution comparison to any task
+sub: "text", "replacement", "expected output"

@@ -32,3 +32,11 @@ Both 6complete and 6partial tags can appear on a single line.
 asjf<fashdf faf="fajhdf">hskjfh
 asjfhskjfh
 A tag can contain more than just letters.
+
+aasdasd</hej>
+aasdasd
+A tag can contain more than just letters.
+
+asdasd%sadasd>test<as!"#¤%&/()=?`´
+test
+A partial tag can contain more than just letters.

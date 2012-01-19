@@ -1,0 +1,36 @@
+; Task 10: Followed by #
+
+!= 1
+abc test#
+You're not even matching a valid string. Try again.
+
+regml: "test#", 0 >= 1
+I told you to 6store the character. This is done with backrefs. If you don't know this by now you're in deep water my friend.
+
+regml: "test#", 0 == 1
+You are setting more backreferences than necessary. Only set 6one backref for each character succeeded by a #. $regml(regexDist, 0)
+
+regml: "abc test#", 1 == "t"
+Your backref does not contain the correct data. In the string "3test#" it should contain "3t".
+
+sub: "test#", "", "tes#"
+You are consuming the hash tag, I told you not to do this.
+
+!= 5
+a#b#c#d#e#
+You are supposed to catch all occurrences!
+
+regml: "##", 1 == "#"
+The character you should be catching could be a hash tag too.
+
+!= 1
+%#
+Any character can be used in front of a hash tag.
+
+!= 1
+7#
+Any character can be used in front of a hash tag.
+
+!= 0
+#
+You're not supposed to match a string without a character in front of the hash tag.

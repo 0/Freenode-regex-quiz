@@ -7,6 +7,10 @@
 ; dot = "." | ","
 ; exponent = ("e" | "E") sign? integer
 
+!= 0
+abc
+You're should 3only match 6integers.
+
 != 1
 1
 You must match 6integers. An integer is a sequence of decimal digits, 030-039.
@@ -28,11 +32,11 @@ You must allow a 6negative sign (3"-").
 You must allow a 6positive sign (3"+").
 
 != 1
-123.456e789
+923.456e789
 You must allow an 6exponent part, separated by an 3"e".
 
 != 1
-123.456E789
+823.456E789
 The 6exponent could also be in upper-case.
 
 != 1
@@ -42,6 +46,14 @@ A leading 6dot must be allowed.
 != 1
 123.
 A trailing 6dot must be allowed.
+
+!= 1
+,123
+A leading 6comma must be allowed.
+
+!= 1
+123,
+A trailing 6comma must be allowed.
 
 != 0
 123..
@@ -64,5 +76,13 @@ You forgot to escape the 3".".
 The exponent can also have a 6sign.
 
 != 0
+.e0
+Just a dot and a exponent is not a valid floating number.
+
+!= 0
 .
 Just a 3"." is not a valid floating number.
+
+!= 0
+...
+Just a 3"." (or several) is not a valid floating number.

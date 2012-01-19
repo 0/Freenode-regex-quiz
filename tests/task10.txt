@@ -15,7 +15,7 @@
 ; === Initial tests ===
 != 1
 localpart@example.com
-An e-mail address is: 6local-part 3"@" 6domain
+An e-mail address is: 6local-part 3"@" 6domain. Remember that they can be longer than one character...
 
 != 1
 LOCALPART@EXAMPLE.COM
@@ -28,6 +28,10 @@ You must allow digits.
 != 1
 localpart@foo.example.com
 The domain must be allowed to contain subdomains. For example: 3"x@foo.example.com"
+
+!= 1
+localpart@foo.more.sub.domains.example.com
+The domain must be allowed to contain 6several subdomains.
 
 != 0
 @example.com

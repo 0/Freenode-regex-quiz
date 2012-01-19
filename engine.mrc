@@ -113,8 +113,8 @@ alias checkTask {
               %inTest = 1
               %testLine =
               inc %testNum
-              if (regml:* iswm %line) {
-                tokenize 44 $regsubex(%line, /^regml:\s*/i,)
+              if (regml:* iswm %line || sub:* iswm %line) {
+                tokenize 44 $regsubex(%line, /^(?:sub|regml):\s*/i,)
                 inc %testLine
               } 
               else {
@@ -173,8 +173,9 @@ alias regexDist {
             noop $regsub(regexDist, %input, $4, $5, %result)
           }
           else {
+            var %tests = $regsubex(%line, /^(?:sub|regml):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/
             if (regml: isin %line) {
-              var %tests = $regsubex(%line, /^regml:\s*/i, ), %a = 2, %regexQuote = /"((?>\\.|[^"])+)"/
+              var %a = 2
               noop $regex(regexDist, $regsubex($gettok(%tests, 1, 44), %regexQuote, \1), $4)
               while ($gettok(%tests, %a, 44)) {
                 var %v1 = $v1
@@ -190,7 +191,16 @@ alias regexDist {
                 }
                 inc %a
               }
-            } 
+            }
+            elseif (sub: isin %line) {
+              var %subText = $regsubex($gettok(%tests, 1, 44), %regexQuote, \1)
+              var %subRepl = $regsubex($gettok(%tests, 2, 44), %regexQuote, \1)
+              var %subEquals = $regsubex($gettok(%tests, 3, 44), %regexQuote, \1)
+              var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
+              if (%regsubex != %subEquals) {
+                %failure = $true
+              }
+            }
             else {
               %input = $fread(regexDist)
               %regex = $regex(regexDist, %input, $4)
@@ -259,7 +269,7 @@ alias reVal {
   var %returnPattern = $+(/,%pat,/,%flags)
   var %substitution = %repl
   if ($prop == pat) { return %returnPattern }
-  if ($prop == sub) { return $iif(%substitution,$v1,$iif(%sub123,true)) }
+  if ($prop == sub) { return $iif(%substitution,$v1) }
   if ($prop == getSub) { return %sub123 }
 }
 
