@@ -1,6 +1,12 @@
 ; Task 1: Word Boundaries
 ; Match the word 'word' anywhere in the input string.
 
+regml: "string to match against word", 0 == 2
+You should only set 2 backrefs
+
+regml: "string to match against word", 1 == "word"
+Word should be in backref 1
+
 == 0
 word
 You are not even matching 6word. Use the example given in the task description.
