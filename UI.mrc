@@ -114,14 +114,14 @@ on $*:TEXT:/^!(commands|help|login|register|regexquiz|stop|submit|info|try|task|
   else if ($regml(1) == info) {
     if ($2) {
       var %u = $iif($2 == -u,$3,$2), %t = $iif($2 == -u,$4,$3)
-      if ($findUserFromHost($address($2,5)) || ($2 == -u && $4 && $isfile($+($regexDir,users\,$3,.ini)))) {
+      if ($findUserFromHost($address($2,5)) || ($2 == -u && $isfile($+($regexDir,users\,$3,.ini)))) {
         var %f = $findUserFromHost($address($nick,5)), %q = $iif($2 == -u,$3,$findUserFromHost($address($2,5)))
         %t = $replace($iif(%t isnum || %t == last,%t,last),last,$regexUser(%q,info,reached))
         if ($regexUser(%f,info,reached) >= $regexUser(%q,info,reached)) {
           if ($regexUser(%f,task $+ %t,shortest)) {
             if ($regexUser(%q,task $+ %t,shortest)) {
               if ($len($regexUser(%f,task $+ %t,shortest)) <= $len($regexUser(%q,task $+ %t,shortest))) {
-                sendTimer %target 3 $+ %u LEVEL $regexUser(%q,info,reached) Sol  %t $+ : $regexUser(%q,task $+ %t,shortest)) 15( $+ $len($regexUser(%q,task $+ %t,shortest))) chars)
+                sendTimer %target 3 $+ %u LEVEL $regexUser(%q,info,reached) Sol  %t $+ : $regexUser(%q,task $+ %t,shortest) 15( $+ $len($regexUser(%q,task $+ %t,shortest)) chars)
               }
               else {
                 sendTimer %target 4Sorry,3 %q $+ 's4 solution is shorter than yours. I will not show it to you! 
@@ -199,7 +199,7 @@ on $*:TEXT:/^!(commands|help|login|register|regexquiz|stop|submit|info|try|task|
       if ($2 <= $regexTasks) {
         var %f = $findUserFromHost($address($nick,5))
         if ($2 <= $regexUser(%f,info,reached)) {
-          noop $validateRegex(%f, $2, $3-) 
+          noop $validateRegex(%f, $2, $3-)
         }
         else {
           sendTimer %target 4You have not reached task $2 yet!
@@ -291,4 +291,4 @@ alias sendTimer {
 }
 alias username2nick returnex $ial($regexUser($1,info,host)).nick
 alias regexFile returnex $mircdir $+ regex/users.ini
-alias regexDir returnex $mircdir $+ regex\
+alias regexDir returnex C:\Users\Firas\Desktop\Freenode-regex-quiz\

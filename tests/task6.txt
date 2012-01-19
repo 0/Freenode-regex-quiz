@@ -1,5 +1,8 @@
-; Task 10: Broken keyboard
+; Task 6: Broken keyboard
 ; Remove repeated input
+
+regml: "aa", 0 == 1
+You should start by setting a backreference to store the data in.
 
 aa
 aa

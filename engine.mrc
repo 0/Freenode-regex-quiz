@@ -161,7 +161,7 @@ alias regexDist {
   if ($fopen(regexDist)) .fclose regexDist
   .fopen regexDist %file
   if (!$ferr) {
-    var %line, %testNum = 0, %out .signal validate $1 $3, %op ==, %v2, %input, %output, %result, %regex 1, %error
+    var %line, %testNum = 0, %out .signal validate $1 $3, %op ==, %v2, %input, %output, %result, %regex 1, %error, %failure $false
     while (!$ferr) && (!$feof) {
       %line = $fread(regexDist)
       if (;* !iswm %line) {

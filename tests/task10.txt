@@ -1,4 +1,4 @@
-; Task 6: Match an e-mail (simplified)
+; Task 10: Match an e-mail (simplified)
 ; Verify an e-mail address.
 ;
 ; History
