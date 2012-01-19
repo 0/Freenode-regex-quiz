@@ -9,3 +9,15 @@ satisfying that condition, would render the expression invalid.
 The second line is the input text passed to $regex() for testing purposes.
 
 The third line is an error message to return should the test fail.
+
+You can now also implement tests that validate backrefs. For example, you can validate the content of backrefs. The syntax looks like this
+regml: <validation>
+Error message
+
+<validation> should look like "string", regml_id == value, regml_id2 == value2, ..., regml_idN = valueN
+If you want to use quotes, escape them as such: \"
+
+Real life example
+
+regml: "match against this string", 0 == 2, 1 === "string", 2 === "this"
+You are not setting 2 backrefs where the first equals "string" and the other "this".
