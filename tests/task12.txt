@@ -14,19 +14,19 @@ You're not catching all spam messages... Perhaps you forgot to make your pattern
 
 != 0
 don't match this porn spam filter
-You're matching one of the exceptions! Your pattern shouldn't match the text 3a porn spam filter. Try reading 12http://www.regular-expressions.info/lookaround2.html
+You're matching one of the exceptions! Your pattern shouldn't match the text "3a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html
 
 != 0
 don't match http://spam.com with mirc
-You're matching one of the exceptions! Your pattern shouldn't match the text 3a porn spam filter. Try reading 12http://www.regular-expressions.info/lookaround2.html
+You're matching one of the exceptions! Your pattern shouldn't match the text "3a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html
 
 != 0
 don't match not allowed http://spam.com 
-You're matching one of the exceptions! Your pattern shouldn't match the text 3a porn spam filter. Try reading 12http://www.regular-expressions.info/lookaround2.html
+You're matching one of the exceptions! Your pattern shouldn't match the text "3a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html
 
 != 0
 don't match MIrC http://spam.com
-You're matching one of the exceptions! Your pattern shouldn't match the text 3a porn spam filter. Try reading 12http://www.regular-expressions.info/lookaround2.html
+You're matching one of the exceptions! Your pattern shouldn't match the text "3a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html
 
 != 1
 give me your credit card number
