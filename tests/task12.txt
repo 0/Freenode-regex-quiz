@@ -1,0 +1,37 @@
+; spam filter task 12
+
+!= 1
+this is some http://spam.com 
+You're not matching a spam message like 3http://spam.com.
+
+!= 1
+wow this is some crazy porn bro
+You need to make sure you're catching all messages containing the spam phrases.
+
+!= 1
+pOrN HtTp:// wWw wwW CREDIT cArd
+You're not catching all spam messages... Perhaps you forgot to make your pattern case insensitive?
+
+!= 0
+don't match this porn spam filter
+You're matching one of the exceptions! Your pattern shouldn't match the text 3a porn spam filter. Try reading 12http://www.regular-expressions.info/lookaround2.html
+
+!= 0
+don't match http://spam.com with mirc
+You're matching one of the exceptions! Your pattern shouldn't match the text 3a porn spam filter. Try reading 12http://www.regular-expressions.info/lookaround2.html
+
+!= 0
+don't match not allowed http://spam.com 
+You're matching one of the exceptions! Your pattern shouldn't match the text 3a porn spam filter. Try reading 12http://www.regular-expressions.info/lookaround2.html
+
+!= 0
+don't match MIrC http://spam.com
+You're matching one of the exceptions! Your pattern shouldn't match the text 3a porn spam filter. Try reading 12http://www.regular-expressions.info/lookaround2.html
+
+!= 1
+give me your credit card number
+It's not matching "3give me your credit card number"! The spam substrings can be anywhere in the string.
+
+!= 0
+filter porn
+You're matching one of the exceptions! Your lookahead should be anchored to the start of text with 6^. Try examples with an exception and a spam word in the string, like 6filter porn. If the regex engine has the pointer in "filter 3<here>porn" it matches porn, and a negative lookahead in that position will return true, making it match when you don't want it to.
