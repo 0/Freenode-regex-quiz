@@ -48,7 +48,7 @@ alias validateRegex {
 
   ; Include an expression which fills $regml(validate, 1) with the input regex
   ; and $regml(validate, 2) with substitution text.
-  if (!$reVal($3).pat) {
+  if (!$reVal($3).pat || !$reVal($3).val) {
     %output 4
     return
   }
@@ -266,6 +266,7 @@ alias reVal {
       var %pat = $regsubex(%pat,/(*UTF8)(?<!\\)((?:\\\\)*)\//g,\1\/)
     }
   }
+  if ($prop == val) { return $iif(%pat,$true,$false) }
   var %returnPattern = $+(/,%pat,/,%flags)
   var %substitution = %repl
   if ($prop == pat) { return %returnPattern }
