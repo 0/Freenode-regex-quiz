@@ -9,9 +9,12 @@ hsdfh<bufhk>dhfhdk
 hsdfhdhfhdk
 A tag is a started by a 03"<", and ended by a 03">". For example, you should remove 03"<html>".
 
+sub: "asd<adf>lol<asd>", "", "==", "asd"
+You are overusing 06greedy quantifiers. For example, in the string "03a<b>c<d>e" you are returning "03ae" when you should be returning "03ace". 
+
 hsdfh<bufhk>kfhgk<jhfk>dhfhdk
 hsdfhkfhgkdhfhdk
-Forgot 03/g? Or are you overusing greedy quantifiers?
+Forgot 03/g?
 
 hsdfh</bufhk>dhfhdk
 hsdfhdhfhdk

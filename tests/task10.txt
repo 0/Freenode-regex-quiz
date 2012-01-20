@@ -13,7 +13,7 @@ You are setting more backreferences than necessary. Only set 06one backreferen
 regml: "abc test#", 1 == "t"
 Your backreference does not contain the correct data. In the string "03abcd#" it should contain "03d".
 
-sub: "test#", "", "tes#"
+sub: "test#", "", "!=", "tes#"
 You are consuming the hash character, I told you not to do this.
 
 != 5
