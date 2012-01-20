@@ -9,80 +9,84 @@
 
 != 0
 abc
-You're should 3only match 6integers.
+You should 03only match 06numbers.
 
 != 1
-1
-You must match 6integers. An integer is a sequence of decimal digits, 030-039.
-
-!= 1
-3748.3756387
-You must match simple floating point numbers. Two 6integers separated by a 6dot (3".") or 6comma (3",").
-
-!= 1
-3748,3756387
-You must match simple floating point numbers. Two 6integers separated by a 6dot (3".") or 6comma (3",").
-
-!= 1
--123.456
-You must allow a 6negative sign (3"-").
-
-!= 1
-+123.456
-You must allow a 6positive sign (3"+").
-
-!= 1
-923.456e789
-You must allow an 6exponent part, separated by an 3"e".
-
-!= 1
-823.456E789
-The 6exponent could also be in upper-case.
-
-!= 1
-.123
-A leading 6dot must be allowed.
-
-!= 1
-123.
-A trailing 6dot must be allowed.
-
-!= 1
-,123
-A leading 6comma must be allowed.
-
-!= 1
-123,
-A trailing 6comma must be allowed.
-
-!= 0
-123..
-Multiple 6dots must not be allowed.
-
-!= 0
-+-1
-Only one 6sign is allowed.
-
-!= 0
-123.456,789
-Only one 6dot or 6comma is allowed.
+1234
+You must match 06integers. An integer is a sequence of decimal digits (030-039).
 
 != 0
 123x456
-You forgot to escape the 3".".
+You forgot to escape the 03".". Don't forget that it's a metacharacter!
+
+!= 1
+3748.3756387
+You must match simple floating point numbers. Two 06integers separated by a 06dot (03".") or 06comma (03",").
+
+!= 1
+3748,3756387
+You must match simple floating point numbers. Two 06integers separated by a 06dot (03".") or 06comma (03",").
+
+!= 1
+-123.456
+You must allow a 06negative sign (03"-").
+
+!= 1
++123.456
+You must allow a 06positive sign (03"+").
+
+!= 1
+923.456e789
+You must allow an 06exponent part, separated by an 03"e". For example, 060.314159e1.
+
+!= 1
+823.456E789
+The 06exponent separator could also be in uppercase.
+
+!= 1
+.123
+A 06leading dot or comma must be allowed.
+
+!= 1
+123.
+A 06trailing dot or comma must be allowed.
+
+!= 1
+,123
+A 06leading dot or comma must be allowed.
+
+!= 1
+123,
+A 06trailing dot or comma must be allowed.
+
+!= 0
+123..
+06Multiple dots must not be allowed.
+
+!= 0
++-1
+Only 06one sign is allowed.
+
+!= 0
+123.456,789
+Only 06one dot or comma is allowed.
 
 != 1
 1.0e-5
-The exponent can also have a 6sign.
+The exponent can also have a 06positive or negative sign.
 
-!= 0
-.e0
-Just a dot and a exponent is not a valid floating number.
+!= 1
+1.0e+5
+The exponent can also have a 06positive or negative sign.
 
 != 0
 .
-Just a 3"." is not a valid floating number.
+Just a dot is not a valid floating number.
+
+!= 0
+.e123
+Just a dot and an exponent is not a valid floating number.
 
 != 0
 ...
-Just a 3"." (or several) is not a valid floating number.
+Several dots do not a number make!

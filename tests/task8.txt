@@ -7,36 +7,28 @@ Don't touch strings without tags.
 
 hsdfh<bufhk>dhfhdk
 hsdfhdhfhdk
-A tag is a started by a 3"<", and ended by a 3">".
+A tag is a started by a 03"<", and ended by a 03">". For example, you should remove 03"<html>".
 
 hsdfh<bufhk>kfhgk<jhfk>dhfhdk
 hsdfhkfhgkdhfhdk
-Forgot 3/g?
+Forgot 03/g?
 
 hsdfh</bufhk>dhfhdk
 hsdfhdhfhdk
-Closing tags start with 3"</", and ends with 3">".
+Closing tags start with 03"</", and end with 03">". For example, you should remove 03"</html>".
 
 dkjshfkj<>jhfj
 dkjshfkjjhfj
-Also remove empty tags 3"<>".
+Also remove empty tags: 03"<>".
 
 hfajshdf>jfhsdhf<sfhsjkdf
 jfhsdhf
-Tags can sometimes span multiple lines. Also remove 6partial tags.
+Tags can sometimes span multiple lines. Also remove 06partial tags, which may be missing either 03"<" or 03">" if they occur at the start or end of the string, respectively.
 
 hfajshdf>jfh<jk>sdhf<sfhsjkdf
 jfhsdhf
-Both 6complete and 6partial tags can appear on a single line.
+Both 06complete and 06partial tags can appear on a single line.
 
-asjf<fashdf faf="fajhdf">hskjfh
+asdasd%sadasd>asjf<fashdf faf="FAJHDF">hskjfh<as!"#¤%&/()=?`´
 asjfhskjfh
-A tag can contain more than just letters.
-
-aasdasd</hej>
-aasdasd
-A tag can contain more than just letters.
-
-asdasd%sadasd>test<as!"#¤%&/()=?`´
-test
-A partial tag can contain more than just letters.
+A tag (<03>06complete<03> or <03>06partial<03>) can contain more than just lowercase letters.
