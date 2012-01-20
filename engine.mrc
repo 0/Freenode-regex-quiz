@@ -189,9 +189,10 @@ alias regexDist {
           elseif (sub: isin %line) {
             var %subText = $regsubex($gettok(%tests, 1, 44), %regexQuote, \1)
             var %subRepl = $regsubex($gettok(%tests, 2, 44), %regexQuote, \1)
-            var %subEquals = $regsubex($gettok(%tests, 3, 44), %regexQuote, \1)
+            var %subComp = $regsubex($gettok(%tests, 3, 44), %regexQuote, \1)
+            var %subEquals = $regsubex($gettok(%tests, 4, 44), %regexQuote, \1)
             var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
-            if (%regsubex != %subEquals) {
+            if (%regsubex %subComp %subEquals) {
               %failure = $true
             }
           }
