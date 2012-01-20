@@ -3,19 +3,19 @@
 
 != 1
 123.124.125.126
-An IP-address is four sets of numbers in the range6 0-06255 separated by dots. (3".")
+An IP-address is four sets of numbers in the range 060-06255 separated by dots (03".").
 
 != 0
 12.34.56.78.90
-Only four groups of numbers is to be allowed.
+Only four groups of numbers are to be allowed.
 
 != 0
 12.34.56
 Must not allow fewer than four groups of numbers.
 
-!= 0
-123.045.67.89
-Leading zeros must not be allowed.
+!= 1
+0.0.0.0
+A single zero must be allowed in any group.
 
 != 0
 123.09.67.89
@@ -25,10 +25,6 @@ Leading zeros must not be allowed.
 00.1.2.3
 Leading zeros must not be allowed.
 
-!= 1
-0.1.2.3
-A single zero must be allowed.
-
 != 0
 256.1.2.3
-Numbers above3 255 must not be allowed.
+Numbers above 03255 must not be allowed.

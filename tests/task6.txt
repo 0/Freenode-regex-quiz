@@ -4,10 +4,6 @@
 regml: "aa", 0 == 1
 You should start by setting a backreference to store the data in.
 
-aa
-aa
-Don't replace strings that don't fit the description.
-
 aa aa aa
 aa aa aa
 Don't replace strings that don't fit the description.
@@ -18,20 +14,20 @@ You're removing the wrong characters!
 
 aaa
 a
-You are not removing the duplicate chars properly! Remember, I want to keep the character I initially typed. Only remove the duplicates!
+You are not removing the duplicate chars properly. Remember, I want to keep the character I initially typed. Only remove the duplicates!
 
-aaabbbccczzzz!!!***
-abczz!*
-You're not removing all types of repeated characters!
+aaammm
+am
+You're not removing all the duplicated characters! My keyboard might jam several 06tttimes in a sente06nnnce.
 
-%%%aaammm
-%am
-You're not removing all the duplicated characters! My keyboard might jam several 06tttimes in a sente06nnnce.
-
-hHh hhh HHH KKk
-hHh h H KKk
-You need to remember that repeated characters are case sensitive!
+%%%aaabbbccczzzz!!!***
+%abczz!*
+You're not removing all types of repeated characters. It's not only the letter keys that get stuck, after all.
 
 HHHHKKKKKK
 HHKK
 Capital letters can also occur in the string.
+
+hHh hhh HHH KKk
+hHh h H KKk
+You need to remember that repeated characters are case sensitive!

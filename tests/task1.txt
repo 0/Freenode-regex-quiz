@@ -3,24 +3,24 @@
 
 == 0
 word
-You are not even matching 6word. Use the example given in the task description.
+You are not even matching 06word. Use the example given in the task description.
 
 != 1
 WoRd
-The string is case insensitive! 3WORD or 3word is the same 6word.
+The string is case insensitive! 03WORD and 03wOrD should match as well as 06word.
 
 != 0
 w wo wor o or ord r rd d
-No shortcuts, you have to match 6word in full.
+No shortcuts, you have to match 06word in full.
 
 != 0
 xord wxrd woxd worx
-Your expression is allowing other characters to be substituted into the word. 6xord is not the same as 3word.
+Your expression is allowing other characters to be substituted into the word. 06xord is not the same as 03word.
 
 != 0
 sword words swords
-Your expression is matching 6word in the middle of words. 3aword is not the same as 6word. You need to read 2http://www.regular-expressions.info/wordboundaries.html.
+Your expression is matching 06word in the middle of words. 03aword is not the same as 06word. You need to read 02http://www.regular-expressions.info/wordboundaries.html.
 
 == 0
 a word a
-You are not matching all strings which contain 6word.
+You are not matching all strings which contain 06word.
