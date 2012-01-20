@@ -1,180 +1,36 @@
-; Task 10: Match an e-mail (simplified)
-; Verify an e-mail address.
-;
-; History
-; =======
-; 2010-07-27
-;   * Test for "!#$%&'*+-/=?^_`{|}~".
-;   * Test for upper case and digits.
-;   * Test against whitespace.
-;   * Dropped the hyphen and subdomain in the first tests.
-;   * Updated the message on a few test cases.
-; 2010-07-26
-;   * Initial release
+; Task 10: Followed by #
 
-; === Initial tests ===
-!= 1
-localpart@example.com
-An e-mail address is: 06local-part03@06domain.
+== 0
+abc test#
+You're not even matching a valid string. Try again.
 
-!= 1
-LOCALPART@EXAMPLE.COM
-You must allow upper case letters. The 03"/i" (ignore case) modifier is recommended.
+regml: "test#", 0 >= 1
+I told you to 06capture the character. This is done with backreferences. If you don't know this by now, you're in deep water, my friend.
 
-!= 1
-0123456789@site0123456789.com
-You must allow digits.
+regml: "test#", 0 == 1
+You are setting more backreferences than necessary. Only set 06one backreference for each character that is followed by a #. $regml(regexDist, 0)
 
-!= 0
-@example.com
-Don't match addresses without a local-part.
+regml: "abc test#", 1 == "t"
+Your backreference does not contain the correct data. In the string "03abcd#" it should contain "03d".
 
-; === Domain tests ===
-!= 0
-x@com
-Don't match domains without a second-level domain as well as the top-level domain (TLD).
+sub: "test#", "", "tes#"
+You are consuming the hash character, I told you not to do this.
+
+!= 5
+a#bc#def#ghij#klmno#
+You are supposed to catch all occurrences!
+
+regml: "##", 1 == "#"
+The character you should be catching could be a hash character too.
 
 != 1
-localpart@foo.example.com
-The domain must be allowed to contain subdomains. For example: 03"x@foo.example.com".
+%#
+Any character can be used in front of a hash character.
 
 != 1
-localpart@foo.more.sub.domains.example.com
-The domain must be allowed to contain 06several subdomains.
+7#
+Any character can be used in front of a hash character.
 
 != 0
-x@.example.com
-6.example.com is not a valid domain because one of the parts begins with a digit.
-
-!= 0
-x@foo..example.com
-Two dots in a row must not be allowed in a domain name.
-
-!= 1
-x@example.museum
-The TLD can be up to 6 characters long.
-
-!= 0
-x@example.loooong
-The TLD is only allowed to be up to 6 characters long. Hint: if you are not already using anchors, you should start now.
-
-!= 0
-x@example.x
-The TLD must be at least 2 characters long.
-
-!= 0
-x@-x.example.com
-The pieces of a domain must begin with alphabetic characters.
-
-!= 1
-x@x.com
-The domain name is allowed to be a single character long.
-
-!= 0
-x@x-.example.com
-The pieces of a domain must not end with a hyphen.
-
-!= 0
-x@xn_foo.example.com
-Underscores (03"_") are not allowed in a domain name.
-
-; International domains
-!= 1
-x@xn--foo.example.com
-Two hyphens in a row must be allowed.
-
-; === Local part tests ===
-!= 1
-x.x@example.com
-06Dots must be allowed in the local part.
-
-!= 0
-.@example.com
-Just 03"." is not an allowed local-part.
-
-!= 0
-x.@example.com
-03"x." is not an allowed local-part.
-
-!= 0
-.x@example.com
-03".x" is not an allowed local-part
-
-!= 0
-x..x@example.com
-Two dots in a row is not allowed in the local-part.
-
-; Required characters
-!= 1
-a!#$%&'*+-/=?^_`{|}~b@example.com
-03!#$%&'*+-/=?^_`{|}~ must be allowed in the local-part.
-
-; Whitespace
-!= 0
-a b@example.com
-Whitespace must not be allowed in the local-part.
-
-!= 0
-a	b@example.com
-Whitespace must not be allowed in the local-part.
-
-; Disallowed symbols
-!= 0
-a@b@example.com
-03@ must not be allowed in the local-part or domain.
-
-!= 0
-a(b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a)b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a(b)c@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a<b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a>b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a<b>c@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a,b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a;b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a:b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a\b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a"b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a[b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a]b@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
-
-!= 0
-a[b]c@example.com
-03()<>,;:\"[] must not be allowed in the local-part.
+#
+You're not supposed to match a string without another character in front of the hash character.

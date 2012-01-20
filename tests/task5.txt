@@ -20,3 +20,11 @@ Tabs also count.
 != 4
 a 	 	b    c	 	 d				e
 You should allow mixed kinds of whitespace together.
+
+!= 1
+a      b
+There can be 4 or 06more whitespaces.
+
+;!= 1
+;	  $+ $chr(10) $+ $chr(13) $+ $chr(12) $+ asd
+;You're not matching all whitespace characters. Read up at http://www.regular-expressions.info/charclass.html.

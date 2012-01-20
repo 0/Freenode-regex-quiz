@@ -167,46 +167,44 @@ alias regexDist {
       if (;* !iswm %line) {
         if (%line != $null) {
           inc %testNum
-          if ($2) {
+          var %tests = $regsubex(%line, /^(?:sub|regml):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/
+          if (regml: isin %line) {
+            var %a = 2
+            noop $regex(regexDist, $regsubex($gettok(%tests, 1, 44), %regexQuote, \1), $4)
+            while ($gettok(%tests, %a, 44)) {
+              var %v1 = $v1
+              var %regml = $regml(regexDist, $gettok(%v1, 1, 32))
+              var %regmlOp = $gettok(%v1, 2, 32)
+              var %equals = $regsubex($gettok(%v1, 3, 32), %regexQuote, \1)
+              if (%regml %regmlOp %equals) {
+                %failure = $false
+              }
+              else {
+                %failure = $true
+                break
+              }
+              inc %a
+            }
+          }
+          elseif (sub: isin %line) {
+            var %subText = $regsubex($gettok(%tests, 1, 44), %regexQuote, \1)
+            var %subRepl = $regsubex($gettok(%tests, 2, 44), %regexQuote, \1)
+            var %subEquals = $regsubex($gettok(%tests, 3, 44), %regexQuote, \1)
+            var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
+            if (%regsubex != %subEquals) {
+              %failure = $true
+            }
+          }
+          elseif ($2) {
             %input = %line
             %output = $fread(regexDist)
             noop $regsub(regexDist, %input, $4, $5, %result)
           }
           else {
-            var %tests = $regsubex(%line, /^(?:sub|regml):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/
-            if (regml: isin %line) {
-              var %a = 2
-              noop $regex(regexDist, $regsubex($gettok(%tests, 1, 44), %regexQuote, \1), $4)
-              while ($gettok(%tests, %a, 44)) {
-                var %v1 = $v1
-                var %regml = $regml(regexDist, $gettok(%v1, 1, 32))
-                var %regmlOp = $gettok(%v1, 2, 32)
-                var %equals = $regsubex($gettok(%v1, 3, 32), %regexQuote, \1)
-                if (%regml %regmlOp %equals) {
-                  %failure = $false
-                }
-                else {
-                  %failure = $true
-                  break
-                }
-                inc %a
-              }
-            }
-            elseif (sub: isin %line) {
-              var %subText = $regsubex($gettok(%tests, 1, 44), %regexQuote, \1)
-              var %subRepl = $regsubex($gettok(%tests, 2, 44), %regexQuote, \1)
-              var %subEquals = $regsubex($gettok(%tests, 3, 44), %regexQuote, \1)
-              var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
-              if (%regsubex != %subEquals) {
-                %failure = $true
-              }
-            }
-            else {
-              %input = $fread(regexDist)
-              %regex = $regex(regexDist, %input, $4)
-              %op = $gettok(%line, 1, 32)
-              %v2 = $gettok(%line, 2, 32)
-            }
+            %input = $fread(regexDist)
+            %regex = $regex(regexDist, %input, $4)
+            %op = $gettok(%line, 1, 32)
+            %v2 = $gettok(%line, 2, 32)
           }
           %error = $fread(regexDist)
           if (!%failure) {

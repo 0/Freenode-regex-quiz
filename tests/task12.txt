@@ -1,37 +1,180 @@
-; spam filter task 12
+; Task 10: Match an e-mail (simplified)
+; Verify an e-mail address.
+;
+; History
+; =======
+; 2010-07-27
+;   * Test for "!#$%&'*+-/=?^_`{|}~".
+;   * Test for upper case and digits.
+;   * Test against whitespace.
+;   * Dropped the hyphen and subdomain in the first tests.
+;   * Updated the message on a few test cases.
+; 2010-07-26
+;   * Initial release
+
+; === Initial tests ===
+!= 1
+localpart@example.com
+An e-mail address is: 06local-part03@06domain.
 
 != 1
-this is some http://spam.com
-You're not matching a spam message like 03http://spam.com.
+LOCALPART@EXAMPLE.COM
+You must allow upper case letters. The 03"/i" (ignore case) modifier is recommended.
 
 != 1
-wow this is some crazy porn bro
-You need to make sure you're catching all messages containing the spam phrases.
+0123456789@site0123456789.com
+You must allow digits.
+
+!= 0
+@example.com
+Don't match addresses without a local-part.
+
+; === Domain tests ===
+!= 0
+x@com
+Don't match domains without a second-level domain as well as the top-level domain (TLD).
 
 != 1
-pOrN HtTp:// wWw wwW CREDIT cArd
-You're not catching all spam messages... Perhaps you forgot to make your pattern case insensitive?
+localpart@foo.example.com
+The domain must be allowed to contain subdomains. For example: 03"x@foo.example.com".
 
 != 1
-give me your credit card number
-It's not matching "03give me your credit card number"! The spam substrings can be anywhere in the string.
+localpart@foo.more.sub.domains.example.com
+The domain must be allowed to contain 06several subdomains.
 
 != 0
-filter porn
-You're matching one of the exceptions! If you're using a lookahead, it should be anchored to the beginning with 06^. Try examples with both an exception and a spam word in the string, like 06filter porn. If the regex engine has the pointer in "filter 03<here>porn", it matches "porn", and a negative lookahead in that position will return true, making it match when you don't want it to.
+x@.example.com
+6.example.com is not a valid domain because one of the parts begins with a digit.
 
 != 0
-don't match this porn spam filter
-You're matching one of the exceptions! Your pattern shouldn't match the text "03a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html.
+x@foo..example.com
+Two dots in a row must not be allowed in a domain name.
+
+!= 1
+x@example.museum
+The TLD can be up to 6 characters long.
 
 != 0
-don't match http://spam.com with mirc
-You're matching one of the exceptions! Your pattern shouldn't match the text "03a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html.
+x@example.loooong
+The TLD is only allowed to be up to 6 characters long. Hint: if you are not already using anchors, you should start now.
 
 != 0
-don't match not allowed http://spam.com
-You're matching one of the exceptions! Your pattern shouldn't match the text "03a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html.
+x@example.x
+The TLD must be at least 2 characters long.
 
 != 0
-don't match MIrC http://spam.com
-You're matching one of the exceptions! Your pattern shouldn't match the text "03a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html.
+x@-x.example.com
+The pieces of a domain must begin with alphabetic characters.
+
+!= 1
+x@x.com
+The domain name is allowed to be a single character long.
+
+!= 0
+x@x-.example.com
+The pieces of a domain must not end with a hyphen.
+
+!= 0
+x@xn_foo.example.com
+Underscores (03"_") are not allowed in a domain name.
+
+; International domains
+!= 1
+x@xn--foo.example.com
+Two hyphens in a row must be allowed.
+
+; === Local part tests ===
+!= 1
+x.x@example.com
+06Dots must be allowed in the local part.
+
+!= 0
+.@example.com
+Just 03"." is not an allowed local-part.
+
+!= 0
+x.@example.com
+03"x." is not an allowed local-part.
+
+!= 0
+.x@example.com
+03".x" is not an allowed local-part
+
+!= 0
+x..x@example.com
+Two dots in a row is not allowed in the local-part.
+
+; Required characters
+!= 1
+a!#$%&'*+-/=?^_`{|}~b@example.com
+03!#$%&'*+-/=?^_`{|}~ must be allowed in the local-part.
+
+; Whitespace
+!= 0
+a b@example.com
+Whitespace must not be allowed in the local-part.
+
+!= 0
+a	b@example.com
+Whitespace must not be allowed in the local-part.
+
+; Disallowed symbols
+!= 0
+a@b@example.com
+03@ must not be allowed in the local-part or domain.
+
+!= 0
+a(b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a)b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a(b)c@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a<b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a>b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a<b>c@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a,b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a;b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a:b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a\b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a"b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a[b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a]b@example.com
+03()<>,;:\"[] must not be allowed in the local-part.
+
+!= 0
+a[b]c@example.com
+03()<>,;:\"[] must not be allowed in the local-part.

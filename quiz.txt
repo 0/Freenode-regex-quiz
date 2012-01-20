@@ -1,25 +1,32 @@
+Purpose:
+This is supposed to be a learning process. The first 1-9 tasks are supposed to be done with using "standard" regex, ie, teach the user to use \s, \w, \d, aswell as backrefs and similar basic things.
+Later down the road, at task 10-13 we start introducing them to lookarounds. These are fairly basic for now.
+At task 14-15 we show them the true power of lookarounds and encourage them to use them properly and what can truly be done with them.
+Task 16 and forward is supposed to introduce \G and other nifty ideas. This is where its supposed to be more advanced and trickier.
+
+
 Task order:
 	1: Word Boundaries
-	2: Capitalize
+	2: Capitalize i
 	3: Uppercase Consonants
 	4: Retreive Numbers
 	5: Whitespaces
-	6: Match a e-mail (simplified)
-	8: Html Tags
+	6: Broken Keyboard
 	7: Validate an IP
+	8: Html Tags
 	9: Validate floating numbers
-	10: Broken keyboard
-	11: Validate credit card numbers
-	12: Followed by #
-	13: Validate an URL
-	14: Spam filter
-	15: Every other digit
-	16: Repeated words
-	17: start before end
-	18: Not surrounded by digits
-	19: The thousands
-	20: Quoted text with escapes
-	21: Match * inside square brackets
+	10: Followed by #
+	11: Spam filter
+	12: Match an E-Mail (Simplified)
+	13: Not surrounded by digits
+	14: Repeated words
+	15: start before end
+	16: Every other digit
+	17: The thousands
+	18: Quoted text with escapes
+	19: Replace text, not code
+	20: Tokenized list
+	21: Replace in between - Match * inside square brackets
 	22: Outermost Brackets
 
 Task 1: Word Boundaries
@@ -123,56 +130,44 @@ Task 10: Broken keyboard
 		...
 	Valid regex:
 		/(.)\1\1/
-
-REMOVED Task 11: Validate credit card numbers
-	Strings:
-		...
-	Valid regex:
-		...
 		
-Task 12: Followed by #
+Task 11: Followed by #
 	Strings:
 		...
 	Valid regex:
 		/(.)(?=#)/g
 
-REMOVED Task 13: Validate an URL
-	Strings:
-		...
-	Valid regex:
-		...
-
-Task 14: Spam filter
+Task 12: Spam filter
 	Strings:
 		...
 	Valid regex:
 		/^(?!.*(filter|mirc|not allowed)).*(?:http:\/\/|www\.|porn|credit card)/i
-		
-Task 15: Every other digit
+			
+Task 13: Not surrounded by digits
 	Strings:
 		...
-	Valid regsub:
-		/\G((?:.\D)*.)\d/g \1*
-	
-Task 16: Repeated words
+	Valid regex:
+		/(?<!\d)\.|\.(?!\d)/g
+
+Task 14: Repeated words
 	Strings:
 		...
 	Valid regex:
 		/(\b\w{4,}\b)(?=(?:.*\b\1\b){2})(?!(.*\b\1\b){3})/ig
 
-Task 17: start before end
+Task 15: start before end
 	Strings:
 		...
 	Valid regex:
 		/^(?:(?!end).)*start/
 		
-Task 18: Not surrounded by digits
+Task 16: Every other digit
 	Strings:
 		...
-	Valid regex:
-		/(?<!\d)\.|\.(?!\d)/g
+	Valid regsub:
+		/\G((?:.\D)*.)\d/g \1*
 		
-Task 19: The thousands
+Task 17: The thousands
 	Strings:
 		100			invalid
 		1000			valid -> 1,000
@@ -182,7 +177,7 @@ Task 19: The thousands
 	Valid regsub:
 		/(\d)(?=(\d{3})+\b)/ \1,
 		
-Task 20: Quoted text with escapes
+Task 18: Quoted text with escapes
 	Strings:
 		...
 	Valid regex:

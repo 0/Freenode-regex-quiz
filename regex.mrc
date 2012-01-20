@@ -1,4 +1,4 @@
-on $*:text:/(*UTF8)^[@.!] *(explain|regex) +/Si:#: {
+on $*:text:/(*UTF8)^[@.!] *(explain|regex) */Si:#: {
   if ($regml(1) == explain) {
     if ($2- != $null) {
       explain $chan $remove($2-,$chr(1),$chr(4))
@@ -30,7 +30,7 @@ on $*:text:/(*UTF8)^[@.?!] *(\S+)/S:#: {
     msg $chan If you have a found a bug with one of the components, please save the data to a file so it can be reproduced and tell Lindrian about it as soon as he is around. Thank you. 
   }
 }
-on $*:text:/(*UTF8)^[@.!] *(explain|regex) +/Si:?: {
+on $*:text:/(*UTF8)^[@.!] *(explain|regex) */Si:?: {
   if ($regml(1) == explain) {
     if ($2) {
       explain $nick $2-
