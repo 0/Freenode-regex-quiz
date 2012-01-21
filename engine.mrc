@@ -113,10 +113,10 @@ alias checkTask {
               %inTest = 1
               %testLine =
               inc %testNum
-              if (regml:* iswm %line || sub:* iswm %line) {
-                tokenize 44 $regsubex(%line, /^(?:sub|regml):\s*/i,)
+              if (validate:* iswm %line || regml:* iswm %line || sub:* iswm %line) {
+                tokenize 44 $regsubex(%line, /^\s*(?:validate|sub|regml):\s*/i,)
                 inc %testLine
-              } 
+              }
               else {
                 tokenize 32 %line
                 if (!%sub) && (0 $1 $2) /
@@ -167,7 +167,7 @@ alias regexDist {
       if (;* !iswm %line) {
         if (%line != $null) {
           inc %testNum
-          var %tests = $regsubex(%line, /^(?:sub|regml):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/
+          var %tests = $regsubex(%line, /^\s*(?:sub|regml|validate):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/
           if (regml: isin %line) {
             var %a = 2
             noop $regex(regexDist, $regsubex($gettok(%tests, 1, 44), %regexQuote, \1), $4)
@@ -194,6 +194,17 @@ alias regexDist {
             var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
             if (%regsubex %subComp %subEquals) {
               %failure = $true
+            }
+          }
+          elseif (validate: isin %line) {
+            var %a = 2, %comp = $regsubex($gettok(%tests, 1, 44), %regexQuote, \1)
+            var %re = $replace($4, \/, /)
+            while ($gettok(%tests, %a, 44)) {
+              var %v1 = $regsubex($v1, %regexQuote, \1)
+              if (%v1 %comp %re) {
+                %failure = 1
+              }
+              inc %a
             }
           }
           elseif ($2) {
