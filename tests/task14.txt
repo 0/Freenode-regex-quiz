@@ -1,5 +1,9 @@
 ; repeated words, task 14
 
+>= 1
+hello hello hello
+You're not matching repeated words at all.
+
 != 0
 hellohellohello
 You should only match repeated 3words. You should know what this is by now.
@@ -17,7 +21,7 @@ one two three
 You're matching strings with no repeated words.
 
 <= 1
-test test test test test test
+test test test hello hello hello
 You really should have figured out you need this regex to be global.
 
 != 1
