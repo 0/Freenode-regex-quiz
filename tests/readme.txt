@@ -46,3 +46,6 @@ Word or word2 is not in your regex
 
 This gets translated tp
 if (word !isin <your regex> || word2 !isin <your regex>) { display error }
+
+-----
+reval: is going to allow regex validation of the regex

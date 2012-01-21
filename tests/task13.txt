@@ -11,6 +11,17 @@
 sub: "x", "-", "==", "-"
 Come on... You should know you have to escape meta characters by now.
 
+sub: ".a.", "-", "==", ".-"
+You need to replace all occurrences properly without consuming any other characters in the string!
+
+.a.
+-a-
+You need to replace all occurrences that match the task description.
+
+..
+--
+You must replace consecutive dots too. You must not consume the following character, since you may need to match it next.
+
 1.
 1-
 One digit on either side is fine.

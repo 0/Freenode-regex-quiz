@@ -65,6 +65,11 @@ alias validateRegex {
     return
   }
 
+  if ($malformedRegex($reval($3).pat)) {
+    %output 8 $v1
+    return
+  }
+
   checkTask $2
 
   hadd -m regexDist $1 $+(%isSub, $lf, $2, $lf, $reVal($3).pat, $lf, $reVal($3).sub)
@@ -207,6 +212,8 @@ alias regexDist {
               inc %a
             }
           }
+          elseif (reval: isin %line) {
+          }
           elseif ($2) {
             %input = %line
             %output = $fread(regexDist)
@@ -325,6 +332,9 @@ on *:signal:validate: {
   }
   else if ($3 == 7) {
     sendTimer %u2n This task requires a substituion string! Use the following format: s/regex/sub/. The delimiter (/) can be chosen to something else if / does not suit you.
+  }
+  else if ($3 == 8) {
+    sendTimer %u2n Your regex is malformed: $4-
   }
   if ($hget(regexDist, $1)) hdel regexDist $1
 }
