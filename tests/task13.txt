@@ -1,0 +1,26 @@
+; Task 13: Not Surrounded By Digits
+; Replace . with - unless surrounded by \d.
+
+x
+-
+Don't forget to escape metacharacters.
+
+..
+--
+Replace all of them!
+
+1.
+1-
+One digit on either side is fine.
+
+abc.5
+abc-5
+One digit on either side is fine.
+
+1.2
+1.2
+Don't touch anything sandwiched between digits!
+
+.0.a.b..1.2.c.3..4-5.6
+-0-a-b--1.2-c-3--4-5.6
+Replace all appropriate occurrences.
