@@ -1,6 +1,13 @@
 ; Task 13: Not Surrounded By Digits
 ; Replace . with - unless surrounded by \d.
 
+; test below can also be written as
+;x
+;x
+;error msg
+; basically says if after a regsub on x the result isnt x, something is wrong, probably meta character
+; I however like the "sub:" feature more due to its versatility.
+
 sub: "x", "-", "==", "-"
 Come on... You should know you have to escape meta characters by now.
 
