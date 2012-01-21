@@ -34,3 +34,15 @@ Here is a message with a $iif($true,if conditional, wtf) $+ .
 Added feature to add substitution comparison to any task
 sub: "text", "replacement", "comparator", "expected output"
 replacement can be \1 etc too
+
+-----
+
+You can not create tests to validate the regex itself using mirc built in comparator functions. Such as "isin", "iswm" etc etc.
+Syntax is:
+validate: "comparator", "comparison1", "comparison2", ...., "comparisonN"
+real life example:
+validate: "!isin", "word", "word2"
+Word or word2 is not in your regex
+
+This gets translated tp
+if (word !isin <your regex> || word2 !isin <your regex>) { display error }

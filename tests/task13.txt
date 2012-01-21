@@ -2,7 +2,7 @@
 ; Replace . with - unless surrounded by \d.
 
 sub: "x", "-", "==", "-"
-Don't forget to escape metacharacters.
+Come on... You should know you have to escape meta characters by now.
 
 1.
 1-
@@ -12,8 +12,11 @@ abc.5
 abc-5
 One digit on either side is fine.
 
+5.
 5-
 One digit on either side is fine.
+
+5.a
 5-a
 One digit on either side is fine.
 

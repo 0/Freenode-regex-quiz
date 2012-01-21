@@ -5,6 +5,10 @@ this is some http://spam.com
 You're not matching a spam message like 03http://spam.com.
 
 != 1
+http://spam.com
+You're not matching a spam message like 03http://spam.com.
+
+!= 1
 wow this is some crazy porn bro
 You need to make sure you're catching all messages containing the spam phrases.
 
@@ -26,12 +30,15 @@ You're matching one of the exceptions! Your pattern shouldn't match the text "0
 
 != 0
 don't match http://spam.com with mirc
-You're matching one of the exceptions! Your pattern shouldn't match the text "03a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html.
+You're matching one of the exceptions! Your pattern shouldn't match the text "03mirc porn filter". Try reading 12http://www.regular-expressions.info/lookaround2.html.
 
 != 0
 don't match not allowed http://spam.com
-You're matching one of the exceptions! Your pattern shouldn't match the text "03a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html.
+You're matching one of the exceptions! Your pattern shouldn't match the text "03porn is not allowed". Try reading 12http://www.regular-expressions.info/lookaround2.html.
 
 != 0
 don't match MIrC http://spam.com
-You're matching one of the exceptions! Your pattern shouldn't match the text "03a porn spam filter". Try reading 12http://www.regular-expressions.info/lookaround2.html.
+You're matching one of the exceptions! Your pattern shouldn't match the text "03mirc http://spam.com". Try reading 12http://www.regular-expressions.info/lookaround2.html.
+
+validate: "!isin", "filter", "mirc", "not allowed", "http://", "www\.", "porn", "credit card"
+Please match the words exactly as they were given to you in the task.
