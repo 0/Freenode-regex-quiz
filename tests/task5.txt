@@ -5,6 +5,14 @@
 x
 Don't match strings without whitespace.
 
+!= 1
+					
+You should match a string only containing 4 or more whitespace characters.
+
+!= 1
+							
+You should match a string only containing 4 or more whitespace characters.
+
 > 0
 x   x
 Don't match when there are only three spaces.
