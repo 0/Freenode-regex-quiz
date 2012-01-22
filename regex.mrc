@@ -600,7 +600,7 @@ alias -l regex.Explain.Literal {
   elseif ( $v1 === \v ) { returnex Any character that's not a vertical whitespace character %quant }
   elseif ( $regex(patttriglit,%token,/(*UTF8)^\\Q((?:(?!\\E).)*+)(?:\\E)?$/) ) { returnex Literal ` $+ $regml(patttriglit,1) $+ ` }
   elseif ( $istokcs(\t [\t] \x09 $chr(9),%token,32) ) { returnex Tab (ASCII 9) }
-  elseif ( $istokcs(\r [\r] \xd \xD \x0d \x0D $cr,%token,32) ) { returnex Carriage returnex (ASCII 13) }
+  elseif ( $istokcs(\r [\r] \xd \xD \x0d \x0D $cr,%token,32) ) { returnex Carriage return (ASCII 13) }
   elseif ( $istokcs(\n [\n] \xa \xA \x0a \x0A $lf,%token,32) ) { returnex Line-feed (newline) (ASCII 10) }
   elseif ( $istokcs(\f [\f] \xc \xC \x0c \x0C $chr(12),%token,32) ) { returnex Form feed (ASCII 12) }
   elseif ( $istokcs(\a [\a] \x7 \x07 $chr(7),%token,32) ) { returnex Bell (ASCII 7) }
@@ -623,7 +623,7 @@ alias -l regex.Explain.Literal {
   ;elseif ( $regex(patttriglit,%token,/(*UTF8)^(?:\\(?:x[0-9a-zA-Z]{1,2}|[\\"^$|.*+?{}()\[\]\/])|[^^$|.*+?{}()\[\]\\]|\[\\?[\\"^$|.*+?{}()\[\]\/]\])++$/) ) {
   elseif ( $regex(patttriglit,%token,/(*UTF8)^(?:\\(?:[^pPXxCbBdDsSwWhHvVRnrcgGAzZKQEtf1-9uUlLN]|x[0-9a-zA-Z]{1,2}|[-\'#&%½§´`¨~;,:_¤£@<>\\"^$|.*+?{!}()\[\]\/])|[^^$|.*+?{}()\[\\]|\[\\?[\\"^$|.*+?{}()\[\]\/]\])++$/) ) {
     if ( $regex(patttriglit,%token,/(*UTF8)(\\([^x])|\[\\?([\\"^$|.*+?{}()\[\]\/])\]|\\x([0-9a-zA-Z]{1,2}))/g) ) {
-      #mIRC_Rainbow,"mIRC Help, Colours, and Popups!"
+      %r = $calc($regml(patttriglit,0) - 1)
       var %newchar
       While (%r > 0) {
         if ( $left($regml(patttriglit,%r),2) === \x ) { %newchar = $chr($base($regml(patttriglit,$calc(%r + 1)),16,10)) }
