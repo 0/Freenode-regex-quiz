@@ -63,7 +63,7 @@ on $*:text:/(*UTF8)^[@.?!] *(\S+)/S:?: {
   }
 }
 alias explain {
-  regex.maketree $iif($1 ischan || $query($1),$1 $attemptFix($2-),$attemptFix($1-))
+  regex.maketree $iif($1 ischan || $query($1),$1 $attemptFix($2-),LOCAL_ECHO $attemptFix($1-))
 }
 alias -l attemptFix {
   var %pattern = $1-
@@ -71,15 +71,13 @@ alias -l attemptFix {
   %pattern = $regsubex(a,%pattern,/(*UTF8){(?=(\d++(?:,?\d*+)?)\})/g,$chr(65501))
   %pattern = $regsubex(e,%pattern,/(*UTF8) $+ $chr(65501) $+ (\d++(?:,?\d*+)?)\K\}/g,$chr(65500))
   %pattern = $regsubex(b,%pattern,/(*UTF8)(?:(\\k)\{([^\}]++)\}|(\\g)(?:\{(\-?[1-9]|[^\}]+)\}))/g,$+($regml(b,1),$chr(50000),$regml(b,2),$chr(50001)))
-  %pattern = $regsubex(c,%pattern,/(*UTF8)(?<!\{\d,|\{\d|{\d,\d)\}/g,$chr(1000))
-  %pattern = $regsubex(d,%pattern,/(*UTF8)\{(?!\d+(?:,\d*)?\})/g,$chr(4000))
+  %pattern = $regsubex(c,%pattern,/(*UTF8)(?<!\{\d,|\{\d|{\d,\d|\\N){[^}]*\K\}/g,$chr(1000))
+  %pattern = $regsubex(d,%pattern,/(*UTF8)(?<!N)\{(?!\d+(?:,\d*)?\})/g,$chr(4000))
   %pattern = $replace(%pattern,$chr(65501),$chr(123),$chr(65500),$chr(125))
   %pattern = $replace(%pattern,$chr(50000),$chr(123),$chr(50001),$chr(125))
-  returnex $replace(%pattern,$chr(32),$chr(1234))
+  returnex %pattern
 }
-; regex.maketree $iif($1 ischan || $query($1),$1 $replace($2-,$chr(32),\x20),$replace($1-,$chr(32),\x20))
-alias -l regex.msg .timerregex. $+ $+($r(a,z),$r(a,z),$r(0,9),$r(0,9)) 1 $calc($iif($regex.timer(regex.*),$v1,-2) +2) regex.msg2 $safe($1-)
-
+alias -l regex.msg { .timerregex. $+ $+($r(a,z),$r(a,z),$r(0,9),$r(0,9)) 1 $calc($iif($regex.timer(regex.*),$v1,-2) +1) regex.msg2 $safe($1-) }
 alias safe {
   var %chr1, %chr2, %chr3, %chrs
 
@@ -103,7 +101,6 @@ alias safe {
   returnex $!desafe(( $+ $replace($1, $chr(32), %chr1, $chr(40), %chr2, $chr(41), %chr3) ) %chrs ) 
 
 }
-
 alias desafe {
   returnex $replace($mid($1, 2, -1), $2, $chr(32), $3, $chr(40), $4, $chr(41))
 }
@@ -123,12 +120,12 @@ alias -l regex.timer {
   }
   returnex $iif(%x,%x,0)
 }
-alias -l regex.echo if ($2) !echo $1-
+alias -l regex.echo if ($2) !echo $fixBrackets($1-)
 alias -l regex.MakeTree {
-  var %target = $iif($1 != $2 && $2,$1,regex), %pattern = $iif(!$2,$1-,$2-)
+  var %target = $1, %pattern = $2-
   ;var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()(\/)|()())/)
   ; var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z])|()())/)
-  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^\\a-z0-9A-Z|^()[{.+*?$])|()())/)
+  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^\\a-z0-9A-Z|^()[{}.+*?$ $+ $chr(4000) $+ $chr(1000) $+ ])|()())/)
   var %sep = $replace($regml(2),\,\\,',\',$chr(35),\ $+ $chr(35))
 
   if (%sep isin |^()[{.+*?$#) {
@@ -139,13 +136,13 @@ alias -l regex.MakeTree {
   var %m = $regml(1), %notsep = $iif(%sep != $null,$+($chr(40),?!,%sep,$chr(41)))
   if (%sep != $null && $regex(%pattern,m'(*UTF8)\s*+ %m %sep .* %sep [gisSmoXAU]*+ x [gisSmoxXAU]*+$'x)) {
     %r = $regsub(%pattern,/(*UTF8)^\s++/,,%pattern)
-    %r = m'(*UTF8)((?:^ %m %sep |(?<!^)\G) (?: \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:[^cQ]|c.) |(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |[^\s\[\]\\] )*+) \s++ 'xg
+    %r = m'(*UTF8)((?:^ %m %sep |(?<!^)\G) (?: \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:[^cQ]|c.) |(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |[^\s\[\]\\] )*+) \s++ 'xg
     %r = $regsub(%pattern,%r,\1,%pattern)
-    %r = m'(*UTF8)((?:^ %m %sep |(?<!^)\G) (?: \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:[^cQ]|c.) |(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |[^\#\[\]\\] )*+) \# .*( $iif(%sep != $null,%sep [gisSmoxXAU]*+$) )'xg
+    %r = m'(*UTF8)((?:^ %m %sep |(?<!^)\G) (?: \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:[^cQ]|c.) |(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |[^\#\[\]\\] )*+) \# .*( $iif(%sep != $null,%sep [gisSmoxXAU]*+$) )'xg
     %r = $regsub(%pattern,%r,\1\2,%pattern)
   }
-  ;set -nl %r m'(*UTF8)^\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))? ( (?: \| |( \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkg]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]+)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXU]*+:|\||<?[=!]|(?:P=[^\)]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXU]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)?\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?:,\d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? ) %sep ([gisSmoxXAU]*+)$'x
-  set -nl %r m'(*UTF8)^\s*+ %m %sep ( ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?: \| |(?!\(\*(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))\(\*\w*+(?::[^\):]+)?\) |( \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkg]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]+)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXU]*+:|\||<?[=!]|(?:P=[^\)]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXU]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)?\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?:,\d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? ) %sep ([gisSmoxXAU]*+)$'x
+  ;set -nl %r m'(*UTF8)^\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))? ( (?: \| |( \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkgNUuLl]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]+)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|\||<?[=!]|(?:P=[^\)]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXUJ]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|R&\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?:,\d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? ) %sep ([gisSmoxXAU]*+)$'x
+  set -nl %r m'(*UTF8)^\s*+ %m %sep ( ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?: \| |\(\*(?:ACCEPT|COMMIT|F|FAIL|(?:MARK|PRUNE|SKIP|THEN)(?::[^:]+)?)\) |( \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkgNUuLl]|N(?!{\w++})|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]+)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|\||<?[=!]|(?:P=[^\)]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXUJ]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|R&\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?:,\d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? ) %sep ([gisSmoxXAU]*+)$'x 
   if (!$regex(%pattern,%r)) { $iif($me ison %target,regex.msg2 $v2,regex.echo -a) $regex.ShowErrorIn(%target,%pattern,%sep,%m,%notsep) }
   elseif (%target != $null && $left(%target,1) != @) {
     var %pattern = $regml(1), %options = $regml(4)
@@ -158,12 +155,12 @@ alias -l regex.MakeTree {
 }
 alias -l regex.ShowErrorIn {
   var %target = $1, %pattern = $2, %sep = $3, %m = $4, %notsep = $5, %ingroup = $6, %gstart, %gend, %r
-  var %longdesc = $iif($window(%target) != $null,$true,$false), %cmd = $iif(%longdesc || %target ischan,msg %target,returnex)
-  if (!%ingroup) { %r = $regex(%pattern,m'(*UTF8)^(\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?: \| |( \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?: (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEgk]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXU]*+:|<?[=!]|P<[^>]++>)(?2)|[-ismxXU]*+|R|&[^& $+ $chr(41) $+ ]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)?\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*+)? )'x) }
+  var %longdesc = $true, %cmd = $iif(%target != LOCAL_ECHO,regex.msg %target,regex.echo -a)
+  if (!%ingroup) { %r = $regex(%pattern,m'(*UTF8)^(\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?: \| |( \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?: (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEgk]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|<?[=!]|P<[^>]++>)(?2)|[-ismxXUJ]*+|R|&[^& $+ $chr(41) $+ ]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*+)? )'x) }
   if (!%ingroup && $len($regml(1)) == $len(%pattern) && %sep != $null) { %cmd 5Expected `6 $+ %sep $+ 5` to end pattern $+(%pattern,4-» here) }
   else {
-    if (!%ingroup) %r = $regex(patttrig,%pattern,m'(*UTF8)^(\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?: \||\(\*\w*+(?::[^:]+)?\)| ( \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^]| (?: (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEgk]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXU]*+:|\||<?[=!]|(?:P=[^\x29]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXU]*+|R|&[^& $+ $chr(41) $+ ]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)?\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?2))\)| %notsep [^^$|*+?{}()\[\]\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? %sep [gisSmoxXAU]*+ )'x)
-    if ( !%ingroup && %r > 0 && %sep != $null && $len($regml(patttrig,1)) != $len(%pattern) && $regex(%pattern,m'(*UTF8)^(\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?:(?: (?!(?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\)))\(\*\w*+(?::[^:]+)?\)| (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |(?:\(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[|$^] )(?![?*+{]) |\\c. |\\[^QcbBAZzGE] |\((?:\?(?!\#))?+(?2)\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?+)?+ )*+ (?:\\Q(?:(?!\\E).)*)? ) %sep [^ $+ %sep $+ ]++ $ )'x) ) { 
+    if (!%ingroup) %r = $regex(patttrig,%pattern,m'(*UTF8)^(\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?: \||\(\*(?:ACCEPT|COMMIT|F|FAIL|(?:MARK|PRUNE|SKIP|THEN)(?::[^:]+)?)\)| ( \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^]| (?: (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEgk]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|\||<?[=!]|(?:P=[^\x29]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXUJ]*+|R|&[^& $+ $chr(41) $+ ]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? %sep [gisSmoxXAU]*+ )'x)
+    if ( !%ingroup && %r > 0 && %sep != $null && $len($regml(patttrig,1)) != $len(%pattern) && $regex(%pattern,m'(*UTF8)^(\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?:(?: \(\*(?:ACCEPT|COMMIT|F|FAIL|(?:MARK|PRUNE|SKIP|THEN)(?::[^:]+)?)\)| (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |(?:\(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[|$^] )(?![?*+{]) |\\c. |\\[^QcbBAZzGE] |\((?:\?(?!\#))?+(?2)\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?+)?+ )*+ (?:\\Q(?:(?!\\E).)*)? ) %sep [^ $+ %sep $+ ]++ $ )'x) ) { 
       ; changed [a-zA-Z] to [^ $+ %sep $+ ]++ to catch all modifiers except the separator itself as that would instead be an invalid character.
       %cmd 5Invalid modifier in $+($regml(patttrig,1),4here -»,$mid(%pattern,$calc($len($regml(patttrig,1)) + 1))) 
     }
@@ -177,41 +174,53 @@ alias -l regex.ShowErrorIn {
         %gstart = $regml(1)
         %gend = $regml(3)
       }
-      var %reg = m'(*UTF8)^( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* ( (?: \||(?!(?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\)))\(\*\w*+(?::[^:\)]++)?\)| ( \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^]| (?: (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkg]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXU]*+:|\||<?[=!]|(?:P=[^\x29]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXU]*+|R|&[^&\x29]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)?\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*+)?+ ) (.)'x
+      ; backup       var %reg = m'(*UTF8)^( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* ( (?: \||\(\*(?:ACCEPT|COMMIT|F|FAIL|(?:MARK|PRUNE|SKIP|THEN)(?::[^:]+)?)\)| ( \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^]| (?: (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkgNUuLl]|N(?!{\w++})|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|\||<?[=!]|(?:P=[^\x29]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXUJ]*+|R|&[^&\x29]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*+)?+ ) (.)'x
+      var %reg = m'(*UTF8)^( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* ( (?: \||\(\*(?:ACCEPT|COMMIT|F|FAIL|(?:MARK|PRUNE|SKIP|THEN)(?::[^:]+)?)\)| ( \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^]| (?: (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkgNUuLl]|N(?!{\w++})|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|\||<?[=!]|(?:P=[^\x29]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXUJ]*+|R|&[^&\x29]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*+)?+ ) (.)'x
       if ( $regex(%pattern,%reg) ) {
-        var %lastbr = $regml(0), %b4 = $regml(1), %after = $mid(%pattern,$regml(%lastbr).pos)
+        var %lastbr = $regml(0), %b4 = $regml(1), %after = $mid(%pattern,$regml(%lastbr).pos), %verbReg = /^\Q(*\E[^\)]++\)/
         if ($regex(dontSaveThisShit, %after, /^\(\*(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\)/)) {
           %char = Verb placed at an invalid location
+          %cmd 5 $+ %char in $+ $iif(%ingroup,$chr(32) $+ the group) $+ : $+(%gstart,%b4,4here -»,%after,%gend)
+        }
+        elseif ($regex(fuckthis, %after, %verbReg)) {
+          %char = Unrecognized verb
+          %cmd 5 $+ %char in $+ $iif(%ingroup,$chr(32) $+ the group) $+ : $+(%gstart,%b4,4here -»,%after,%gend)
+          ;invalid verbs
+        }
+        elseif ($regex(fuckthis, %after, /^\\(?:[uUlL]|N{[^}]++})/)) {
+          ; all unsupported escape sequences here
+          %char = Unsupported escape sequence
+          %cmd 5 $+ %char in $+ $iif(%ingroup,$chr(32) $+ the group) $+ : $+(%gstart,%b4,4here -»,%after,%gend)
+        }
+        elseif ($regex(iReallyShouldGiveTheseADecentName, %after, /^\[[^:]*:[^:]++:\]/)) {
+          ;invalid posix group
+          %char = Invalid POSIX named set
           %cmd 5 $+ %char in $+ $iif(%ingroup,$chr(32) $+ the group) $+ : $+(%gstart,%b4,4here -»,%after,%gend)
         }
         elseif ( $regml(%lastbr) == $null ) { %cmd 4Unknown syntax error (I can't find the position) }
         elseif ( $v1 != $chr(40) ) {
           var %char = Invalid character
           if ( $v1 isin +*?{} ) { %char = Quantifier with no preceding token }
-          ;elseif ( $v1 isin {} ) { 
-          ;  ;explain $gettok(%cmd,2,32) $replace(%pattern,$chr(123),\ $+ $chr(123),$chr(125),\ $+ $chr(125))
-          ;  explain $gettok(%cmd,2,32) $replace(%pattern,$chr(123),$chr(65501),$chr(125),$chr(4))
-          ;  return
-          ;  }
           elseif ( $v1 == [[ ) {
-            if ( $mid(%pattern,$calc($regml(4).pos + 1),1) == ]] ) { %char = Empty charater class }
+            ;changed from regml(4) to regml(lastbr)
+            if ( $mid(%pattern,$calc($regml(%lastbr).pos + 1),1) == ]] ) { %char = Empty charater class }
             else { %char = Unbalanced character class }
           }
           elseif ( $v1 == ]] ) { %char = Unbalanced character class }
           elseif ( $v1 == $chr(41) ) {
             %char = Unbalanced bracket
-            %r = /(*UTF8)([^\(]*+) \( ( \?\#[^ $+ $chr(41) $+ ]*+ |(?!\?\#)(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\])|\\Q(?:(?!\\E).)*+\\E|\\(?:c.|[^Qc])|[^()\\]|\((?2)\) )*+ ) \) /xg
+            %r = /(*UTF8)([^\(]*+) \( ( \?\#[^ $+ $chr(41) $+ ]*+ |(?!\?\#)(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\])|\\Q(?:(?!\\E).)*+\\E|\\(?:c.|[^Qc])|[^()\\]|\((?2)\) )*+ ) \) /xg
             %r = $regsub(%b4,%r,\1(\2),%b4)
             %after = 6) $+ $mid(%after,2)
           }
           %cmd 5 $+ %char in $+ $iif(%ingroup,$chr(32) $+ the group) $+ : $+(%gstart,%b4,4here -»,%after,%gend)
         }
         else {
-          %r = /(*UTF8)^\((?:(?!\?)|\?(?:\#|>|[-ismxXU]*+:|<?[=!]|P<[^>]++>|[-ismxXU]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)?\w+|[+-]\d++|\?<?[=!])))/
+          %r = /(*UTF8)^\((?:(?!\?)|\?(?:\#|>|[-ismxXUJ]*+:|<?[=!]|P<[^>]++>|[-ismxXUJ]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)\w+|[+-]\d++|\?<?[=!])))/
           if ( !$regex(%after,%r) ) { %cmd 5Invalid construct in $+ $iif(%ingroup,$chr(32) $+ nested group) $+ : $+(%gstart,%b4,4here -»,%after,%gend) }
           else {
-            %r = /(*UTF8)^\( ( (?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:c.|[^Qc])|[^()]|\((?!\?\#)(?1)\))*+ ) \)/x
-            if ( $regsub(%after,%r,4 -»(\1)4 -»,%after) ) {
+            %r = /(*UTF8)^\( ( (?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:c.|[^Qc])|[^()]|\((?!\?\#)(?1)\))*+ ) \)/x
+            if ( $regsub(%after,%r,4 -»(\1)4«-,%after) ) {
               if ( %longdesc ) {
                 %cmd 5Syntax error in $iif(%ingroup,nested) group $+(%gstart,%b4,%after,%gend)
                 %r = $regex.ShowErrorInGroup(%target,$regml(1),%sep,%m,%notsep)
@@ -220,7 +229,7 @@ alias -l regex.ShowErrorIn {
             }
             else {
               %r = /(*UTF8)^\( ( (?:\(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:c.|[^Qc])|[^()]|\((?!\?\#)(?1)\))*+ ) \)/x
-              if ( $regsub(%after,%r,4 -»(\1)4 -»,%after) ) {
+              if ( $regsub(%after,%r,4 -»(\1)4«-,%after) ) {
                 if ( %longdesc ) {
                   %cmd 5Syntax error in $iif(%ingroup,nested) group $+(%gstart,%b4,%after,%gend)
                   %r = $regex.ShowErrorInGroup(%target,$regml(1),%sep,%m,%notsep)
@@ -228,7 +237,7 @@ alias -l regex.ShowErrorIn {
                 else { %cmd $regex.ShowErrorInGroup(%target,$regml(1),%sep,%m,%notsep) }
               }
               else {
-                %r = /(*UTF8)([^\(]*+) \( ( \?\#[^ $+ $chr(41) $+ ]*+ |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\\Q(?:(?!\\E).)*+\\E|\\c.|\\[^Qc]|[^()\\]|\((?2)\) )*+ ) \) /xg
+                %r = /(*UTF8)([^\(]*+) \( ( \?\#[^ $+ $chr(41) $+ ]*+ |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\Q(?:(?!\\E).)*+\\E|\\c.|\\[^Qc]|[^()\\]|\((?2)\) )*+ ) \) /xg
                 %r = $regsub($mid(%after,2),%r,\1(\2),%after)
                 %cmd 5Unbalanced group starts in $+(%gstart,%b4,4here -»,6,$chr(40),,%after,%gend)
               }
@@ -250,7 +259,7 @@ alias -l regex.Explain {
   var %imode = $4, %smode = $5, %mmode = $6, %xmode = $7, %XXmode = $8, %Umode = $9
   var %N, %i, %r, %null = (null, matches any position)
   if ( %pattern == $null ) { $regex.RefOut(%target,%lvl) %null %quant }
-  elseif ( $regex(%pattern,m'(*UTF8)( \G ( (?: \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^]| (?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGE]) |\((?:\?(?!\#))?+(?:\||(?2))*+\)| %notsep [^^$|*+?{()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ )*+ ) (?:\\Q(?:(?!\\E).)*+$)?+ ) (\|)'gx) ) {
+  elseif ( $regex(%pattern,m'(*UTF8)( \G ( (?: \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^]| (?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGE]) |\((?:\?(?!\#))?+(?:\||(?2))*+\)| %notsep [^^$|*+?{()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ )*+ ) (?:\\Q(?:(?!\\E).)*+$)?+ ) (\|)'gx) ) {
     %N = $v1
     %i = $regml(0)
     set -nl %patt.alt. $+ %lvl $+ . $+ $calc(%N + 1) $mid(%pattern,$calc($regml(%i).pos + $len($regml(%i))))
@@ -266,7 +275,7 @@ alias -l regex.Explain {
       %r = $regex.Explain.Show(%target,%patt.alt. [ $+ [ %lvl ] $+ . $+ [ %i ] ] ,%lvl,$ord(%i) alternation: %patt.alt. [ $+ [ %lvl ] $+ . $+ [ %i ] ] ,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
     }
   }
-  elseif ( $regex(%pattern,m'(*UTF8)\G(( (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\(\*(?:[\w:]++)\)|\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|00?[1-7]|0)|\\(?:c.|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])|[^Qcx^$|.*+?{()\[\]\\]) |\(\?\#[^ $+ $chr(41) $+ ]*+\) |\((?:\?[-+]?(?!\#))?+(?:\+|\||(?1))*+\)| [$^.] |(?:\\(?:[|.$^*+?{()\[\]\\]|x[\da-fA-F]{1,2})|[^^$|.*+?{()\[\\]|\[\\?[\\"^$|*+?{}()\[\]\/]\]) (?:(?:\\(?:[|.$^*+?{()\[\]\\]|x[\da-fA-F]{1,2}+)|[^^$|.*+?{()\[\\]|\[\\?[\\"^$|.*+?{}()\[\]\/]\])+(?![?*+{]))? |\\Q(?:(?!\\E).)*+(?:\\E|$) ) (?:([*+?]|\{\d++(?: $chr(44) \d*+)?+\})([?+]?+)|()()) )'gx) ) {
+  elseif ( $regex(%pattern,m'(*UTF8)\G(( (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|[^\]\r\n])++\]) |\(\*(?:[\w:]++)\)|\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|00?[1-7]|0)|\\(?:c.|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])|[^Qcx^$|.*+?{()\[\]\\]) |\(\?\#[^ $+ $chr(41) $+ ]*+\) |\((?:\?[-+]?(?!\#))?+(?:\+|\||(?1))*+\)| [$^.] |(?:\\(?:[|.$^*+?{()\[\]\\]|x[\da-fA-F]{1,2})|[^^$|.*+?{()\[\\]|\[\\?[\\"^$|*+?{}()\[\]\/]\]) (?:(?:\\(?:[|.$^*+?{()\[\]\\]|x[\da-fA-F]{1,2}+)|[^^$|.*+?{()\[\\]|\[\\?[\\"^$|.*+?{}()\[\]\/]\])+(?![?*+{]))? |\\Q(?:(?!\\E).)*+(?:\\E|$) ) (?:([*+?]|\{\d++(?: $chr(44) \d*+)?+\})([?+]?+)|()()) )'gx) ) {
     %N = $v1
     %i = 0
     var %j = 0, %refout, %quant
@@ -285,7 +294,7 @@ alias -l regex.Explain {
       var %token = %patt.alt. [ $+ [ %lvl ] $+ . $+ [ %i ] ]
       %refout = $regex.RefOut(%target,%lvl)
       %quant = $regex.Explain.Quantifiers(%patt.quant. [ $+ [ %lvl ] $+ . $+ [ %i ] ] ,%patt.lazy. [ $+ [ %lvl ] $+ . $+ [ %i ] ] ,%Umode)
-      if ( $regex(%token,/(*UTF8)^\(\?([-ismxXU]*+):(.*)\)$/) ) {
+      if ( $regex(%token,/(*UTF8)^\(\?([-ismxXUJ]*+):(.*)\)$/) ) {
         if ( $regml(1) == $null ) { %r = $regex.Explain.Show(%target,$regml(2),%lvl,Group %token %quant,%imode,%smode,%mmode,%xmode,%XXmode,%Umode) }
         else {
           var %groupmodes = $regml(1), %grouppattern = $regml(2)
@@ -307,7 +316,7 @@ alias -l regex.Explain {
           %r = $regex.Explain.Recurse(%target,%grouppattern,%lvl,%gimode,%gsmode,%gmmode,%gxmode,%gXXmode,%gUmode)
         }
       }
-      elseif ( $regex(%token,/(*UTF8)^\(\?([-ismxXU]++)\)$/) ) {
+      elseif ( $regex(%token,/(*UTF8)^\(\?([-ismxXUJ]++)\)$/) ) {
         var %groupmodes = $regml(1)
         %refout %token Modifiers
         %r = $regex.ExplainModifiers(%target,%groupmodes,$calc(%lvl + 1))
@@ -326,17 +335,23 @@ alias -l regex.Explain {
       }
       elseif ( $regex(%token,/(*UTF8)^\(\*[\w:+]+\)$/) ) {
         %text = 4Undescribed specific verb 5No description for it yet (nothing's perfect)
-        if (%token == (*UTF8)) { %text = Sets the property mode to UTF-8 }
-        elseif (%token == (*UCP)) { %text = Sets the property mode to Unicode }
-        elseif (%token == (*NO_START_OPT)) { %text = Suppresses the start-of-match optimizations that are otherwise run by PERL }
-        elseif (%token == (*CR)) { %text = Specifies a newline convention: carriage return }
-        elseif (%token == (*LF)) { %text = Specifies a newline convention: linefeed }
-        elseif (%token == (*CRLF)) { %text = Specifies a newline convention: (*CR), followed by (*LF) }
-        elseif (%token == (*ANYCRLF)) { %text = Specifies a newline convention: (*CR), (*LF) or (*CRLF) }
-        elseif (%token == (*ANY)) { %text = Specifies a newline convention: all Unicode newline sequences }
-        elseif (%token == (*BSR_ANYCRLF)) { %text = Specifies a newline convention: (*CR), (*LF) or (*CRLF) only }
-        elseif (%token == (*BSR_UNICODE)) { %text = Specifies a newline convention: any Unicode newline sequence }
-        elseif ($regex(%token, /\(\(?:MARK)?:[^:]+\)/)) { %text = Marker verb whose main purpose is to track how a match was arrived at. }
+        if (%token === (*UTF8)) { %text = Sets the property mode to UTF-8 }
+        elseif (%token === (*UCP)) { %text = Sets the property mode to Unicode }
+        elseif (%token === (*NO_START_OPT)) { %text = Suppresses the start-of-match optimizations that are otherwise run by PERL }
+        elseif (%token === (*CR)) { %text = Specifies a newline convention: carriage return }
+        elseif (%token === (*LF)) { %text = Specifies a newline convention: linefeed }
+        elseif (%token === (*CRLF)) { %text = Specifies a newline convention: (*CR), followed by (*LF) }
+        elseif (%token === (*ANYCRLF)) { %text = Specifies a newline convention: (*CR), (*LF) or (*CRLF) }
+        elseif (%token === (*ANY)) { %text = Specifies a newline convention: all Unicode newline sequences }
+        elseif (%token === (*BSR_ANYCRLF)) { %text = Specifies a newline convention: (*CR), (*LF) or (*CRLF) only }
+        elseif (%token === (*BSR_UNICODE)) { %text = Specifies a newline convention: any Unicode newline sequence }
+        elseif ($regex(%token, /\(\*(?:MARK)?:[^:]+\)/)) { %text = Marker verb whose main purpose is to track how a match was arrived at. }
+        elseif (%token === (*FAIL)) { %text = Verb synonymous with (?!). Forces a matching failure at the given position in the pattern. }
+        elseif (%token === (*F)) { %text = Shorthand for (*FAIL) }
+        elseif ($regex(%token, /\(\*PRUNE(?::[^:]+)?\)/)) { %text = This verb causes the match to fail at the current starting position in the subject if the rest of the pattern does not match. }
+        elseif (%token === (*COMMIT)) { %text = Causes the whole match to fail outright if the rest of the pattern does not match. }   
+        elseif ($regex(%token, /\(\*THEN(?::[^:]+)?\)/)) { %text = Causes a skip to the next innermost alternative if the rest of the pattern does not match. }
+        elseif ($regex(%token, /\(\*SKIP(?::[^:]+)?\)/)) { %text = Acts like (*PRUNE), except that  if the  pattern  is unanchored, the "bumpalong" advance is not to the next character, but to the position in the subject where (*SKIP) was encountered. }
         %refout %token %text
       }
       elseif ( $regex(%token,/(*UTF8)^\((?![?#])(.*)\)$/) ) {
@@ -378,13 +393,13 @@ alias -l regex.Explain {
       elseif ( $regex(%token,/(*UTF8)^\(\? (?#br1=cond)( \( ( (?: \[(?:\\c.|\\[^c]|\[:[^\]]*:\]|[^\]])++\] |\(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\c. |\\[^Qc] |\(\??(?2)\)| [^()\[] )*+ ) \) ) (?#br3=true)(( (?: \[(?:\\c.|\\[^c]|\[:[^\]]*:\]|[^\]])++\] |\(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\c. |\\[^Qc] |\(\??(?:\||(?4))*+\)| [^|()\[] )*+ )) (?#br5=[|false]?) (?:\|(.*))?\) $ /x) ) {
         var %pifcond = $regml(1), %piftrue = $regml(3), %piffalseexists = $iif($regml(0) >= 5,$true,$false), %piffalse = $regml(5), %newlvl = $calc(%lvl + 1), %newrefout = $regex.RefOut(%target,%newlvl)
         %refout %token IF clause %quant
-        if ( $regex(%pifcond,/(*UTF8)^\(([+-])(\d++)\)$/) ) { %newrefout Condition: %pifcond True if the backreference $regml(2) is set $iif($regml(1) isin +-,2[relative] $getRecursion($regml(2),$regml(1))) }
-        elseif ( $regex(%pifcond,/(*UTF8)^\((<[^>]++>|\'[^\']++\'|(?:R&)?\w+)\)$/) ) { 
+        if ( $regex(%pifcond,/(*UTF8)^\(([+-])(\d++)\)$/) ) { %newrefout Condition: %pifcond True if the backreference $regml(2) is set $iif($regml(1) isin +-,2[relative] $getBackref($regml(2))) }
+        elseif ( $regex(%pifcond,/(*UTF8)^\((<[^>]++>|\'[^\']++\'|(?:R&)\w+)\)$/) ) { 
           if ($regml(1) === R) {
             %newrefout Condition: %pifcond True if overall pattern recursion matches
           }
           elseif ($regex(abc,$regml(1),/(*UTF8)^R([1-9])$/)) {
-            %newrefout Condition: %pifcond True if $regml(abc,1) $+ $iif($regml(abc,1) == 1,st,$iif($regml(abc,1) == 2,nd,$iif($regml(abc,1) == 3,rd))) recursive subpattern matches
+            %newrefout Condition: %pifcond True if $regml(abc,1) $+ $ord($regml(abc,1)) recursive subpattern matches
           }
           elseif ($regex(ab,$regml(1),/(*UTF8)^R&(.+)$/)) {
             %newrefout Condition: %pifcond True if ' $+ $regml(ab,1) $+ ' recursive subpattern matches
@@ -410,7 +425,7 @@ alias -l regex.Explain {
       }
       elseif ( $regex(%token,/(*UTF8)^\(\?#([^ $+ $chr(41) $+ ]*+)\)$/) ) { %refout Comment: $regml(1) }
       elseif ( $regex(%token,/(*UTF8)^\\(\d++)$/) && $regml(1) isnum 1 - %regex.BRs ) { %refout %token Matches text saved in BackRef $regml(1) %quant }
-      elseif ( $regex(%token,/(*UTF8)^\\g\{?(-?)([1-9])\}$/) ) { %refout %token Matches text saved in BackRef $regml(2) %quant $iif($regml(1) == -,2[relative] $getRecursion($regml(2),$regml(1))) }
+      elseif ( $regex(%token,/(*UTF8)^\\g\{?(-?)([1-9])\}?$/) ) { %refout %token Matches text saved in BackRef $regml(2) %quant $iif($regml(1),2[relative] $getBackref($regml(2))) }
       elseif ( $regex(%token,/(*UTF8)^\\g\{?([^\}]+)\}$/) ) { %refout %token Matches text saved in BackRef ' $+ $regml(1) $+ ' %quant }
       elseif ( $regex(%token,/(*UTF8)^\\k(?|<([^>]++)>|\'([^\']++)\'|\{([^\}]++)\})$/) ) { %refout %token Matches text saved in BackRef ' $+ $regml(1) $+ ' %quant }
       elseif ( $regex(%token,/(*UTF8)^\(\?P=(.+)\)$/) ) {
@@ -418,16 +433,16 @@ alias -l regex.Explain {
       }
       elseif ( $regex(%token,/(*UTF8)^\((\d++)\)$/) && $regml(1) isnum 1 - %regex.BRs ) { %refout %token Recurse BackRef $regml(1) %quant }
       elseif ( %token == (?R) || %token == (?0) ) { %refout %token Recurse the whole pattern %quant }
-      elseif ( $regex(%token,/(*UTF8)^\Q(?\E([+-]?)([1-9]+)\)$/) ) { %refout %token Recurse the $regml(1) $+ $regml(2) $+ $iif($regml(2) == 1,st,$iif($regml(2) == 2,nd,$iif($regml(2) == 3,rd,th))) subpattern %quant $iif($regml(1) isin +-,2[relative] $getRecursion($regml(2),$regml(1))) }  
+      elseif ( $regex(%token,/(*UTF8)^\Q(?\E([+-]?)([1-9]+)\)$/) ) { %refout %token Recurse the $ord($regml(2)) subpattern %quant $iif($regml(1) isin +-,2[relative] $getRecursion($regml(2),$regml(1))) }  
       elseif ( $regex(%token,/(*UTF8)^\Q(?\E&([^&]+)\)$/) ) { %refout %token Recurse the subpattern after group ' $+ $regml(1) $+ ' %quant }  
-      elseif ( $regex(%token,/(*UTF8)^(\[:(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit:):\])$/) && %lvl == 2) {
-        %refout $regml(1) $getCharClass($regml(1)) $replace($regml(1),:alnum:,A-Za-z0-9,:alpha:,A-Za-z,:blank:, \t,:cntrl:,\x00-\x1F\x7F,:graph:,\x21-\x7E,:lower:,a-z,:print:,\x20-\x7E,:punct:,$+($chr(93),$chr(91),!"#,$chr(36),%&',$chr(40),$chr(41),*+,$chr(44),./:;<=>?@\^_`,$chr(123),$chr(124),$chr(125),~-),:space:, \t\r\n\v\f,:upper:,A-Z,:xdigit:,A-Fa-f0-9) 14[POSIX]
+      elseif ( $regex(%token,/(*UTF8)^(\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\])$/) && %lvl == 2) {
+        %refout $regml(1) $getCharClass($regml(1)) $replace($regml(1),:^,^:,:alnum:,A-Za-z0-9,:alpha:,A-Za-z,:blank:, \t,:cntrl:,\x00-\x1F\x7F,:graph:,\x21-\x7E,:lower:,a-z,:print:,\x20-\x7E,:punct:,$+($chr(93),$chr(91),!"#,$chr(36),%&',$chr(40),$chr(41),*+,$chr(44),./:;<=>?@\^_`,$chr(123),$chr(124),$chr(125),~-),:space:, \t\r\n\v\f,:upper:,A-Z,:xdigit:,A-Fa-f0-9) 14[POSIX]
       }
       elseif ( $regex(ncharclass,%token,/(*UTF8)^\[\^(.*)\]$/) ) {
         var %z = $regsubex($regml(ncharclass,1),/(*UTF8)\\([^pPXxCbBDsSwWhHvVRcgGAzZKQEd0-9aefnrt-\\])/gi,\1)
         var %newToken = $highlightClasses(%z)
         %refout Negated char class %token %quant matches any char except: $replace(%newToken, $chr(1234), $chr(160))
-        noop $regex(posix,$regml(ncharclass,1),/(*UTF8)(\[:(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit:):\])/g)
+        noop $regex(posix,$regml(ncharclass,1),/(*UTF8)(\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\])/g)
         var %a = 1
         while (%a <= $regml(posix,0)) {
           %r = $regex.Explain.Recurse(%target,$regml(posix,%a),%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
@@ -438,7 +453,7 @@ alias -l regex.Explain {
         var %z = $regsubex($regml(charclass,1),/(*UTF8)\\([^pPXxCbBDsSwWhHvVRcgGAzZKQEd0-9aefnrt-\\])/gi,\1)
         var %newToken = $highlightClasses(%z)
         %refout Char class %token %quant matches one of the following chars: $replace(%newToken, $chr(1234), $chr(160))
-        noop $regex(posix,$regml(charclass,1),/(\[:(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit:):\])/g)
+        noop $regex(posix,$regml(charclass,1),/(\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\])/g)
         var %a = 1
         while (%a <= $regml(posix,0)) {
           %r = $regex.Explain.Recurse(%target,$regml(posix,%a),%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
@@ -456,20 +471,22 @@ alias -l regex.Explain {
 }
 
 alias getCharClass {
-  if ($1 == [:alnum:]) { returnex Alphanumeric characters }
-  if ($1 == [:word:]) { returnex Alphanumeric characters plus "_" }
-  if ($1 == [:alpha:]) { returnex Alphabetic characters }
-  if ($1 == [:blank:]) { returnex Space and tab }
-  if ($1 == [:cntrl:]) { returnex Control characters }
-  if ($1 == [:digit:]) { returnex Digits }
-  if ($1 == [:graph:]) { returnex Visible characters }
-  if ($1 == [:lower:]) { returnex Lowercase letters }
-  if ($1 == [:print:]) { returnex Visible characters and the space character }
-  if ($1 == [:punct:]) { returnex Punctuation characters }
-  if ($1 == [:space:]) { returnex Whitespace characters }
-  if ($1 == [:upper:]) { returnex Uppercase letters }
-  if ($1 == [:xdigit:]) { returnex Hexadecimal digits }
-  if ($1 == [:space:]) { returnex Whitespace characters }
+  var %input = $remove($1, ^)
+  if (^ isin $1) { returnex Negation of %input }
+  if (%input == [:alnum:]) { returnex Alphanumeric characters }
+  if (%input == [:word:]) { returnex Alphanumeric characters plus "_" }
+  if (%input == [:alpha:]) { returnex Alphabetic characters }
+  if (%input == [:blank:]) { returnex Space and tab }
+  if (%input == [:cntrl:]) { returnex Control characters }
+  if (%input == [:digit:]) { returnex Digits }
+  if (%input == [:graph:]) { returnex Visible characters }
+  if (%input == [:lower:]) { returnex Lowercase letters }
+  if (%input == [:print:]) { returnex Visible characters and the space character }
+  if (%input == [:punct:]) { returnex Punctuation characters }
+  if (%input == [:space:]) { returnex Whitespace characters }
+  if (%input == [:upper:]) { returnex Uppercase letters }
+  if (%input == [:xdigit:]) { returnex Hexadecimal digits }
+  if (%input == [:space:]) { returnex Whitespace characters }
 }
 
 alias highlightClasses {
@@ -594,10 +611,13 @@ alias -l regex.Explain.Literal {
   elseif ( $v1 === \W ) { returnex Negated word character [^a-zA-Z_\d] %quant }
   elseif ( $v1 === \s ) { returnex Whitespace [\t \r\n\f] %quant }
   elseif ( $v1 === \S ) { returnex Any char except whitespaces [^\t \r\n\f] %quant }
-  elseif ( $v1 === \H ) { returnex Any horizontal whitespace character %quant }
-  elseif ( $v1 === \h ) { returnex Any character that's not a horizontal whitespace character %quant }
+  elseif ( $v1 === \H ) { returnex Negated horizontal whitespace character %quant }
+  elseif ( $v1 === \h ) { returnex Any horizontal whitespace character (equal to [:blank:]) %quant }
   elseif ( $v1 === \V ) { returnex Any vertical whitespace character %quant }
   elseif ( $v1 === \v ) { returnex Any character that's not a vertical whitespace character %quant }
+  elseif ( $v1 === \N ) { returnex Any non-newline character %quant }
+  elseif ( $v1 === \R ) { returnex Outside a character class, by default, the escape sequence \R matches any Unicode newline sequence. This can be modified using verbs. }
+  elseif ( $v1 === \C ) { returnex Matches one byte, even in UTF-8 mode 5(best avoided) }
   elseif ( $regex(patttriglit,%token,/(*UTF8)^\\Q((?:(?!\\E).)*+)(?:\\E)?$/) ) { returnex Literal ` $+ $regml(patttriglit,1) $+ ` }
   elseif ( $istokcs(\t [\t] \x09 $chr(9),%token,32) ) { returnex Tab (ASCII 9) }
   elseif ( $istokcs(\r [\r] \xd \xD \x0d \x0D $cr,%token,32) ) { returnex Carriage return (ASCII 13) }
@@ -617,11 +637,8 @@ alias -l regex.Explain.Literal {
   elseif ( $regex(octal, %token,/(*UTF8)^\\([1-3][0-7]{2}|0?[1-7][0-7]|00?[1-7]|0)$/) ) {
     returnex %quant Octal Literal ` $+ $chr($base($regml(octal, 1),8,10,0)) $+ `
   }
-  elseif ( $regex(unsupported, %token, /(*UTF8)^\\[uUNLl]$/) ) {
-    returnex %quant 4Unsupported escape squence. Will generate error in PCRE.
-  }
   ;elseif ( $regex(patttriglit,%token,/(*UTF8)^(?:\\(?:x[0-9a-zA-Z]{1,2}|[\\"^$|.*+?{}()\[\]\/])|[^^$|.*+?{}()\[\]\\]|\[\\?[\\"^$|.*+?{}()\[\]\/]\])++$/) ) {
-  elseif ( $regex(patttriglit,%token,/(*UTF8)^(?:\\(?:[^pPXxCbBdDsSwWhHvVRnrcgGAzZKQEtf1-9uUlLN]|x[0-9a-zA-Z]{1,2}|[-\'#&%½§´`¨~;,:_¤£@<>\\"^$|.*+?{!}()\[\]\/])|[^^$|.*+?{}()\[\\]|\[\\?[\\"^$|.*+?{}()\[\]\/]\])++$/) ) {
+  elseif ( $regex(patttriglit,%token,/(*UTF8)^(?:\\(?:[^pPXxCbBdDsSwWhHvVRnrcgGAzZKQEtf1-9uUlLN]|x[0-9a-zA-Z]{1,2}|[-\'#&%½§´`¨~;,:_¤£@<>\\"^$|.*+?{!}()\[\]\/])|[^^$|.*+?{}()\[\\]|\[\\?[\\"^$|.*+?{}()\[\]\/]\])++$/) ) { 
     if ( $regex(patttriglit,%token,/(*UTF8)(\\([^x])|\[\\?([\\"^$|.*+?{}()\[\]\/])\]|\\x([0-9a-zA-Z]{1,2}))/g) ) {
       %r = $calc($regml(patttriglit,0) - 1)
       var %newchar
@@ -694,6 +711,10 @@ alias -l regex.ExplainModifiers {
       Continue
     }
     elseif ( %letter === g ) { %desc = global. All matches (don't return on first match) }
+    elseif ( %letter === J ) {
+      if ( %on ) { %desc = Allow duplicate subpattern names }
+      else { %desc = Disallow duplicate subpattern names }
+    }
     elseif ( %letter === i ) {
       if ( %on ) { %desc = insensitive. Case insensitive match (ignores case of [a-zA-Z]) }
       else { %desc = 7-insensitive. Case sensitive match }
@@ -778,11 +799,18 @@ alias re {
   %ret %retData
 }
 alias msg {
-  !msg $1 $replace($2-,$chr(4000),$chr(123),$chr(1000),$chr(125),$chr(1234),$chr(32))
+  !msg $1 $fixBrackets($2-)
+}
+alias fixBrackets {
+  return $replace($1-,$chr(4000),$chr(123),$chr(1000),$chr(125),$chr(1234),$chr(32))
 }
 
 alias getRecursion {
-  returnex (refers to the $1 $+ $iif($1 == 1,st,$iif($1 == 2,nd,$iif($1 == 3,rd))) most recently opened parentheses $iif($2 == -,preceding,subsequent to) the recursion)
+  returnex (refers to the $ord($1) most recently opened parentheses $iif($2 == -,preceding,subsequent to) the recursion)
+}
+
+alias getBackref {
+  returnex (refers to the $ord($1) most recently started capturing subpattern before \g)
 }
 
 /*
@@ -932,7 +960,7 @@ alias re_consumed {
 
 alias malformedRegex {
   var %pattern = $1-
-  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z|\\^()[{.+*?$])|()())/)
+  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z|\\^()[{}.+*?$ $+ $chr(4000) $+ $chr(1000) $+ ])|()())/)
   var %sep = $replace($regml(2),\,\\,',\',$chr(35),\ $+ $chr(35))
   if (%sep isin |^()[{.+*?$) {
     return Please don't use meta characters as delimiters, it's no good.
@@ -941,12 +969,12 @@ alias malformedRegex {
   var %notsep = $iif(%sep != $null,$+($chr(40),?!,%sep,$chr(41)))
   if (%sep != $null && $regex(%pattern,m'(*UTF8)\s*+ %m %sep .* %sep [gisSmoXAU]*+ x [gisSmoxXAU]*+$'x)) {
     %r = $regsub(%pattern,/(*UTF8)^\s++/,,%pattern)
-    %r = m'(*UTF8)((?:^ %m %sep |(?<!^)\G) (?: \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:[^cQ]|c.) |(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |[^\s\[\]\\] )*+) \s++ 'xg
+    %r = m'(*UTF8)((?:^ %m %sep |(?<!^)\G) (?: \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:[^cQ]|c.) |(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |[^\s\[\]\\] )*+) \s++ 'xg
     %r = $regsub(%pattern,%r,\1,%pattern)
-    %r = m'(*UTF8)((?:^ %m %sep |(?<!^)\G) (?: \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:[^cQ]|c.) |(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |[^\#\[\]\\] )*+) \# .*( $iif(%sep != $null,%sep [gisSmoxXAU]*+$) )'xg
+    %r = m'(*UTF8)((?:^ %m %sep |(?<!^)\G) (?: \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:[^cQ]|c.) |(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |[^\#\[\]\\] )*+) \# .*( $iif(%sep != $null,%sep [gisSmoxXAU]*+$) )'xg
     %r = $regsub(%pattern,%r,\1\2,%pattern)
   }
-  set -nl %r m'(*UTF8)^\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* ( (?: \| |(?!\(\*(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))\(\*\w*+(?::[^:]+)?\)| ( \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c])|\[:[^\]\r\n]*:\]|[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkg]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]+)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXU]*+:|\||<?[=!]|(?:P=[^\)]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXU]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)?\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?:,\d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? ) %sep ([gisSmoxXAU]*+)$'x
+  set -nl %r m'(*UTF8)^\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* ( (?: \| |\(\*(?:ACCEPT|COMMIT|F|FAIL|(?:MARK|PRUNE|SKIP|THEN)(?::[^:]+)?)\)| ( \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkgNUuLl]|N(?!{\w++})|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^+\-\}]+)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|\||<?[=!]|(?:P=[^\)]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXUJ]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?:,\d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? ) %sep ([gisSmoxXAU]*+)$'x
   if (!$regex(%pattern,%r)) { return $regex.ShowErrorIn($null,%pattern,%sep,%m,%notsep) }
 
 }
