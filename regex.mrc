@@ -128,7 +128,7 @@ alias -l regex.MakeTree {
   var %target = $iif($1 != $2 && $2,$1,regex), %pattern = $iif(!$2,$1-,$2-)
   ;var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()(\/)|()())/)
   ; var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z])|()())/)
-  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z|^()[{.+*?$])|()())/)
+  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^\\a-z0-9A-Z|^()[{.+*?$])|()())/)
   var %sep = $replace($regml(2),\,\\,',\',$chr(35),\ $+ $chr(35))
 
   if (%sep isin |^()[{.+*?$#) {
@@ -523,17 +523,6 @@ alias highlightClasses {
   }
   returnex %newToken %msg
 }
-
-alias regex.Duplicate {
-  var %newstr, %i = 1, %str = $1-
-  while ($mid(%str,%i,1) != $null) { 
-    if ($v1 !isincs %newstr) {
-      %newstr = %newstr $+ $iif($v1 == $chr(32),$chr(160),$v1)
-    }
-    inc %i 
-  }
-  returnex %newstr
-}
 alias -l regex.Explain.Recurse { var %r = $regex.Explain($1,$2,$calc($3 + 1),$4,$5,$6,$7,$8,$9) }
 alias -l regex.RefOut Return { regex.Hash.AddTree $1 $2 }
 alias -l regex.Hash.AddTree {
@@ -926,7 +915,7 @@ alias re_consumed {
 
 alias malformedRegex {
   var %pattern = $1-
-  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z|^()[{.+*?$])|()())/)
+  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z|\\^()[{.+*?$])|()())/)
   var %sep = $replace($regml(2),\,\\,',\',$chr(35),\ $+ $chr(35))
   if (%sep isin |^()[{.+*?$) {
     return Please don't use meta characters as delimiters, it's no good.

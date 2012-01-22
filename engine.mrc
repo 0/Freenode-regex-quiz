@@ -261,8 +261,10 @@ alias regexDist {
 ; $reVal(/regex/)
 ; Validate the regex
 alias reVal {
-  var %input = $1-, %sre = /(*UTF8)^s([^\w\s\\])((?:\\.|(?!\\|\1).)*)\1((?:\\.|(?!\\|\1).)*)\1([gisSmoxXAU]*)\s*$/, $&
-    %mre1 = /(*UTF8)^m?([^\w\s\\])((?:\\.|(?!\\|\1).)*)\1([gisSmoxXAU]*)\s*$/, %ret = $iif($isid,returnex,echo -ti12a)
+  var %input = $1-, %sre = /(*UTF8)^s([^\w\s\\])((?:\\.|(?!\\|\1).)*)\1((?:\\.|(?!\\|\1).)*)\1(.*)\s*$/, $&
+    %mre1 = /(*UTF8)^m?([^\w\s\\])((?:\\.|(?!\\|\1).)*)\1(.*)\s*$/, %ret = $iif($isid,returnex,echo -ti12a)
+
+  ;[gisSmoxXAU] switched to .
   var %sub123 = $false
   if ($regex(sre,%input,%sre) isnum 1-) {
     var %delim = $regml(sre,1), %pat = $regml(sre,2), %repl = $regml(sre,3), %flags = $regml(sre,4)
@@ -322,7 +324,7 @@ on *:signal:validate: {
     sendTimer %u2n You already have a task queued for validation! Please be patient, I'm working as fast as I can!
   }
   else if ($3 == 4) { 
-    sendTimer %u2n Your regex is incorrectly formated. It's either /regex/, m/regex/ or s/regex/sub/. The delimiter (/) can be chosen to something else if / does not suit you.
+    sendTimer %u2n Your regex is incorrectly formatted. It's either /regex/, m/regex/ or s/regex/sub/. The delimiter (/) can be chosen to something else if / does not suit you.
   }
   else if ($3 == 5) { 
     sendTimer %u2n You provided a substitution string on a task that does not require it, please try again without it!
