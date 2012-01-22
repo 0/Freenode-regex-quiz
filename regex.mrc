@@ -336,7 +336,7 @@ alias -l regex.Explain {
         elseif (%token == (*ANY)) { %text = Specifies a newline convention: all Unicode newline sequences }
         elseif (%token == (*BSR_ANYCRLF)) { %text = Specifies a newline convention: (*CR), (*LF) or (*CRLF) only }
         elseif (%token == (*BSR_UNICODE)) { %text = Specifies a newline convention: any Unicode newline sequence }
-        elseif ($regex(%token, /\(\*[^:]*:[^:]+\)/)) { %text = Marker verb whose main purpose is to track how a match was arrived at. }
+        elseif ($regex(%token, /\(\(?:MARK)?:[^:]+\)/)) { %text = Marker verb whose main purpose is to track how a match was arrived at. }
         %refout %token %text
       }
       elseif ( $regex(%token,/(*UTF8)^\((?![?#])(.*)\)$/) ) {
