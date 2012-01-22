@@ -65,8 +65,7 @@ alias validateRegex {
     return
   }
 
-  if ($malformedRegex($reval($3).pat)) {
-    %output 8 $v1
+  if ($malformedRegex($1, $reval($3).pat)) {
     return
   }
 

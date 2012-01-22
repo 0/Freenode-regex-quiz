@@ -9,7 +9,7 @@ on $*:text:/(*UTF8)^[@.!] *(explain|regex) */Si:#: {
   }
   elseif ($regml(1) == regex) {
     if ($2- != $null) {
-      msg $chan $re($2-)
+      msg $chan $re($chan, $2-)
     } 
     else {
       msg $chan Syntax is: !regex <text> /regex/, !regex <text> s/regex/replacement/
@@ -41,7 +41,7 @@ on $*:text:/(*UTF8)^[@.!] *(explain|regex) */Si:?: {
   }
   elseif ($regml(1) == regex) {
     if ($2) {
-      msg $nick $re($2-)
+      msg $nick $re($nick, $2-)
     } 
     else {
       msg $nick Syntax is: !regex <text> /regex/, !regex <text> s/regex/replacement/
@@ -155,7 +155,12 @@ alias -l regex.MakeTree {
 }
 alias -l regex.ShowErrorIn {
   var %target = $1, %pattern = $2, %sep = $3, %m = $4, %notsep = $5, %ingroup = $6, %gstart, %gend, %r
-  var %longdesc = $true, %cmd = $iif(%target != LOCAL_ECHO,regex.msg %target,regex.echo -a)
+  var %longdesc = $true, %cmd = regex.msg %target 
+  if (%target == LOCAL_ECHO) { %cmd = regex.echo -a }
+  else if (%target == SHORT_DATA) {
+    %longdesc = $false
+    %cmd = returnex
+  }
   if (!%ingroup) { %r = $regex(%pattern,m'(*UTF8)^(\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* (?: \| |( \(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?: (?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEgk]|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^\}]++)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|<?[=!]|P<[^>]++>)(?2)|[-ismxXUJ]*+|R|&[^& $+ $chr(41) $+ ]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?: $chr(44) \d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*+)? )'x) }
   if (!%ingroup && $len($regml(1)) == $len(%pattern) && %sep != $null) { %cmd 5Expected `6 $+ %sep $+ 5` to end pattern $+(%pattern,4-» here) }
   else {
@@ -747,7 +752,7 @@ alias -l regex.ExplainModifiers {
   }
 }
 alias re {
-  var %input = $1-, %sre = /(*UTF8)^(?:(.*)\s)s([^\w\s\\])((?:\\.|(?!\\|\2).)*)\2((?:\\.|(?!\\|\2).)*)\2(.*)\s*$/, $&
+  var %input = $2-, %sre = /(*UTF8)^(?:(.*)\s)s([^\w\s\\])((?:\\.|(?!\\|\2).)*)\2((?:\\.|(?!\\|\2).)*)\2(.*)\s*$/, $&
     %mre1 = /(*UTF8)^(.*)\sm?([^\w\s\\])((?:\\.|(?!\\|\2).)*)\2(.*)\s*$/, %ret = $iif($isid,returnex,echo -ti12a), %retData
   ; [gisSmoxXAU] replaced with .* in order to allow explain engine to find the error
   if ($regex(sre,%input,%sre) isnum 1-) {
@@ -793,8 +798,8 @@ alias re {
   else {
     %retData = Syntax is: !regex <text> /regex/, !regex <text> s/regex/replacement/
   }
-  if ($malformedRegex($+(%delim,%pat,%delim,%flags))) {
-    %ret $v1 
+  if ($malformedRegex($1, $+(%delim,%pat,%delim,%flags))) {
+    return
   }
   %ret %retData
 }
@@ -959,7 +964,7 @@ alias re_consumed {
 }
 
 alias malformedRegex {
-  var %pattern = $1-
+  var %pattern = $2-
   var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z|\\^()[{}.+*?$ $+ $chr(4000) $+ $chr(1000) $+ ])|()())/)
   var %sep = $replace($regml(2),\,\\,',\',$chr(35),\ $+ $chr(35))
   if (%sep isin |^()[{.+*?$) {
@@ -975,6 +980,6 @@ alias malformedRegex {
     %r = $regsub(%pattern,%r,\1\2,%pattern)
   }
   set -nl %r m'(*UTF8)^\s*+ %m %sep ( (?:\Q(*\E(?:NO_START_OPT|CR|LF|CRLF|ANYCRLF|ANY|BSR_ANYCRLF|BSR_UNICODE|UTF8|UCP)\))* ( (?: \| |\(\*(?:ACCEPT|COMMIT|F|FAIL|(?:MARK|PRUNE|SKIP|THEN)(?::[^:]+)?)\)| ( \(\?\#[^\)]*+\) |\\Q(?:(?!\\E).)*+\\E |\\[bBAZzG] |[$^] |(?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\\(?:c.|[^QcbBAZzGEkgNUuLl]|N(?!{\w++})|k(?:<[^>]++>|\'[^\']++\'|\{[^\}]++\})|g(?:\{(?:\-?[1-9]|[^+\-\}]+)\}|[1-9])) |\((?:\?(?:(?:>|[-ismxXUJ]*+:|\||<?[=!]|(?:P=[^\)]++|P?<[^>]++>|\'[^\']++\'))(?2)|[-ismxXUJ]*+|R|&[^&\)]++|[-+]?\d++|\((?:<[^>]++>|\'[^\']++\'|(?:R&)\w+|[+-]\d++|\?<?[=!](?2))\)(?2))|(?!\?)(?2))\)| %notsep [^^$|*+?{}()\[\\] ) (?:(?:[*+?]|\{\d++(?:,\d*+)?\})[?+]?)?+ ) )*+ ) (?:\\Q(?:(?!\\E).)*)? ) %sep ([gisSmoxXAU]*+)$'x
-  if (!$regex(%pattern,%r)) { return $regex.ShowErrorIn($null,%pattern,%sep,%m,%notsep) }
+  if (!$regex(%pattern,%r)) { return $true $regex.ShowErrorIn($1,%pattern,%sep,%m,%notsep) }
 
 }
