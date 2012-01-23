@@ -7,9 +7,6 @@
 ; @version: 0.1
 ; @date: 2012-01-23
 
-; /(^a|b\1)+$/
-; /^a(?=ba|$)(?:(b+)a(?=$|b\1a))*$/
-
 ; lines can not be empty (ie, null). Added $null instead.
 
 != 0
