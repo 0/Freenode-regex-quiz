@@ -1,0 +1,129 @@
+; @name: Challenge 25: ababba
+; @description:
+; Write an expression to match strings "a", "aba", "ababba", "ababbabbba", etc.
+; The number of consecutive "b"s increases by one after each "a".
+; Bonus: Make the expression 12 characters (including quoting slashes) or less.
+; @author: Andreas Zetterlund
+; @version: 0.1
+; @date: 2012-01-23
+
+; /(^a|b\1)+$/
+; /^a(?=ba|$)(?:(b+)a(?=$|b\1a))*$/
+
+; lines can not be empty (ie, null). Added $null instead.
+
+!= 0
+$null
+Empty string is not valid and should not match.
+
+== 0
+a
+Valid string not matched: a
+
+!= 1
+aba
+Valid string not matched: aba
+
+!= 0
+aa
+Match on invalid string: aa
+
+!= 0
+ab
+Match on invalid string: ab
+
+!= 0
+ba
+Match on invalid string: ba
+
+!= 0
+abba
+Match on invalid string: abba
+
+!= 0
+abab
+Match on invalid string: abab
+
+!= 0
+ababa
+Match on invalid string: ababa
+
+!= 0
+ababb
+Match on invalid string: ababb
+
+!= 1
+ababba
+Valid string not matched: ababba
+
+!= 0
+ababbba
+Match on invalid string: ababbba
+
+!= 0
+ababbaa
+Match on invalid string: ababbaa
+
+!= 0
+aababba
+Match on invalid string: aababba
+
+!= 1
+ababbabbba
+Valid string not matched: ababbabbba
+
+!= 0
+abbabbba
+Match on invalid string: abbabbba
+
+!= 0
+aababbabbba
+Match on invalid string: aababbabbba
+
+!= 1
+ababbabbbabbbba
+Valid string with 4 consecutive "b"s not matched.
+
+!= 1
+ababbabbbabbbbabbbbba
+Valid string with 5 consecutive "b"s not matched.
+
+!= 1
+ababbabbbabbbbabbbbbabbbbbba
+Valid string with 6 consecutive "b"s not matched.
+
+!= 1
+ababbabbbabbbbabbbbbabbbbbbabbbbbbba
+Valid string with 7 consecutive "b"s not matched.
+
+!= 1
+ababbabbbabbbbabbbbbabbbbbbabbbbbbbabbbbbbbba
+Valid string with 8 consecutive "b"s not matched.
+
+!= 0
+ababbabbbabbbbabbbbbabbbbbbabbbbbbabbbbbbbbba
+Invalid string matched.
+
+!= 1
+ababbabbbabbbbabbbbbabbbbbbabbbbbbbabbbbbbbbabbbbbbbbba
+Valid string with 9 consecutive "b"s not matched.
+
+!= 0
+abbabbbabbbbabbbbbabbbbbbabbbbbbbabbbbbbbbabbbbbbbbba
+Invalid string matched.
+
+!= 0
+ababbabbbabbbbabbbbbabbbbbbabbbbbbbabbbbbbbbbabbbbbbbba
+Invalid string matched.
+
+!= 0
+ababbabbbabbbbabbbbbabbbbbbabbbbbbbabbbbbbbbabbbbbbbbbabbbbbbbbba
+Invalid string matched.
+
+!= 1
+ababbabbbabbbbabbbbbabbbbbbabbbbbbbabbbbbbbbabbbbbbbbba
+Valid string with 9 consecutive "b"s not matched.
+
+!= 1
+ababbabbbabbbbabbbbbabbbbbbabbbbbbbabbbbbbbbabbbbbbbbbabbbbbbbbbba
+Valid string with 10 consecutive "b"s not matched.

@@ -220,6 +220,9 @@ alias regexDist {
           }
           else {
             %input = $fread(regexDist)
+            if (%input == $!null) {
+              %input = $null
+            }
             %regex = $regex(regexDist, %input, $4)
             %op = $gettok(%line, 1, 32)
             %v2 = $gettok(%line, 2, 32)
@@ -310,6 +313,9 @@ on *:signal:validate: {
     sendTimer %u2n 2 $+ $($regexTask($2,finalMessage),2)
     if ($regexUser($1,info,reached) <= $regexTasks && $regexUser($1,info,reached) == $calc($2 +1)) {
       sendTimer %u2n 3Task $calc($2 +1) of $regexTasks $+ : $+([,$regexTask($calc($2 +1),title),]) $regexTask($calc($2 +1),description)
+    }
+    elseif ($regexUser($1,info,reached) > $regexTasks && $2 == $regexTasks) {
+      .signal validate $1-2 6
     }
   }
   else if ($3 == 1) { 
