@@ -1,6 +1,6 @@
 ; repeated words, task 14
 
->= 1
+== 0
 hello hello hello
 You're not matching repeated words at all.
 
@@ -38,3 +38,15 @@ If a certain word is repeated many times, you're setting more than 1 backreferen
 
 regml: "test test test test hello hello hello hello", 0 == 2, 1 == "test", 2 == "hello"
 You are not setting the correct backreferences. You should only set one for each group of repeated words.
+
+!= 0
+word word wordnot
+Not working, sorry. Read the task again. It matches 6word word wordnot. Should I remind you of word boundaries again?
+
+!= 0
+word notword word
+Not working, sorry. Read the task again. It matches 6word word wordnot. Should I remind you of word boundaries again?
+
+< 2
+word1 word2 word1 word2 word1 word2
+It's not working when more than 1 word is repeated. Try 06"word1 word2 word1 word2 word1 word2". The engine is probably consuming chars for the first match, not allowing the second match to occur. Can you think of a regex construct that doesn't consume the chars?
