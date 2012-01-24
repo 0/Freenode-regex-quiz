@@ -14,6 +14,10 @@ Come on... You should know you have to escape meta characters by now.
 sub: ".a.", "-", "==", ".-"
 You need to replace all occurrences properly without consuming any other characters in the string!
 
+a.b
+a-b
+You should replace 3a.b with 6a-b.
+
 .a.
 -a-
 You need to replace all occurrences that match the task description.
@@ -24,37 +28,33 @@ You must replace consecutive dots too. You must not consume the following charac
 
 1.
 1-
-One digit on either side is fine.
+One digit on 03either side is fine.
 
 abc.5
 abc-5
-One digit on either side is fine.
+One digit on 03either side is fine.
 
 5.
 5-
-One digit on either side is fine.
+One digit on 36either side is fine.
 
 5.a
 5-a
-One digit on either side is fine.
+One digit on 03either side is fine.
 
 1.2
 1.2
-Do 03not touch anything sandwiched between digits!
+Read the task description again. Do 03not touch anything sandwiched between digits!
 
 9876.94742.1547897.456465
 9876.94742.1547897.456465
-Do 03not touch anything sandwiched between digits!
-
-abc#.#def&.&sd
-abc#-#def&-&sd
-You're not replacing all appropriate occurrences. Remember, you need to replace 3any character that fits the description.
-
-..
---
-You're not replacing all appropriate occurrences.
+Read the task description again. Do 03not touch anything sandwiched between digits!
 
 .0.a.b..1.2.c.3..4-5.6
 -0-a-b--1.2-c-3--4-5.6
 You're not replacing all appropriate occurrences.
+
+abc#.#d2.ef&.1&sd!.$as.2.2.%
+abc#-#d2-ef&-1&sd!-$as-2.2-%
+You're not replacing all appropriate occurrences. Remember, you need to replace 3any character that fits the description.
 

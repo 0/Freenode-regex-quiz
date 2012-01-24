@@ -171,15 +171,14 @@ alias regexDist {
       if (;* !iswm %line) {
         if (%line != $null) {
           inc %testNum
-          var %tests = $regsubex(%line, /^\s*(?:sub|regml|validate):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/
+          var %tests = $regsubex(%line, /^\s*(?:sub|regml|validate):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/g
+          noop $regex(validate, %tests, %regexQuote)
+          var %t = $regml(validate, 0)
           if (regml: isin %line) {
             var %a = 2
-            noop $regex(regexDist, $regsubex($gettok(%tests, 1, 44), %regexQuote, \1), $4)
+            noop $regex(regexDist, $regml(validate, 1), $4)
             while ($gettok(%tests, %a, 44)) {
-              var %v1 = $v1
-              var %regml = $regml(regexDist, $gettok(%v1, 1, 32))
-              var %regmlOp = $gettok(%v1, 2, 32)
-              var %equals = $regsubex($gettok(%v1, 3, 32), %regexQuote, \1)
+              var %v1 = $v1, %regml = $regml(regexDist, $gettok(%v1, 1, 32)), %regmlOp = $gettok(%v1, 2, 32), %equals = $regsubex($gettok(%v1, 3, 32), %regexQuote, \1)
               if (%regml %regmlOp %equals) {
                 %failure = $false
               }
@@ -191,20 +190,20 @@ alias regexDist {
             }
           }
           elseif (sub: isin %line) {
-            var %subText = $regsubex($gettok(%tests, 1, 44), %regexQuote, \1)
-            var %subRepl = $regsubex($gettok(%tests, 2, 44), %regexQuote, \1)
-            var %subComp = $regsubex($gettok(%tests, 3, 44), %regexQuote, \1)
-            var %subEquals = $regsubex($gettok(%tests, 4, 44), %regexQuote, \1)
+            var %subText = $regml(validate, 1)
+            var %subRepl = $regml(validate, 2)
+            var %subComp = $regml(validate, 3)
+            var %subEquals = $regml(validate, 4)
             var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
             if (%regsubex %subComp %subEquals) {
               %failure = $true
             }
           }
           elseif (validate: isin %line) {
-            var %a = 2, %comp = $regsubex($gettok(%tests, 1, 44), %regexQuote, \1)
+            var %a = 2, %comp = $regml(validate, 1)
             var %re = $replace($4, \/, /)
-            while ($gettok(%tests, %a, 44)) {
-              var %v1 = $regsubex($v1, %regexQuote, \1)
+            while ($regml(validate, %a)) {
+              var %v1 = $eval($v1,2)
               if (%v1 %comp %re) {
                 %failure = 1
               }

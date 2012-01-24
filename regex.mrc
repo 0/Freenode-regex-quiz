@@ -30,7 +30,7 @@ on $*:text:/(*UTF8)^[@.?!] *(\S+)/S:#: {
     msg $chan If you have a found a bug with one of the components, please save the data to a file so it can be reproduced and tell Lindrian about it as soon as he is around. Thank you. 
   }
 }
-on $*:text:/(*UTF8)^[@.!] *(explain|regex) */Si:?: {
+on $*:text:/(*UTF8)^[@.!] *(explain|regex(?!quiz)) */Si:?: {
   if ($regml(1) == explain) {
     if ($2) {
       explain $nick $2-
@@ -228,9 +228,11 @@ alias -l regex.ShowErrorIn {
           else {
             %r = /(*UTF8)^\( ( (?:(?:\Q[^]]\E|\Q[]]\E|\[(?(?=\^)\^)\]?(?:\\(?:c.|[^c\r\n])|\[:\^?(?:alnum|alpha|word|blank|cntrl|digit|graph|lower|print|punct|space|upper|xdigit):\]|(?!(?<![^\[\r\n]):[^:\r\n]+:(?![^\]\r\n]))[^\]\r\n])++\]) |\(\?\#[^ $+ $chr(41) $+ ]*+\) |\\Q(?:(?!\\E).)*+\\E |\\(?:c.|[^Qc])|[^()]|\((?!\?\#)(?1)\))*+ ) \)/x
             if ( $regsub(%after,%r,4 -»(\1)4«-,%after) ) {
+              var %temp = $regml(1)
+              ; %temp seems to do the trick for consecutive, simltaneous runs..?
               if ( %longdesc ) {
                 %cmd 5Syntax error in $iif(%ingroup,nested) group $+(%gstart,%b4,%after,%gend)
-                %r = $regex.ShowErrorInGroup(%target,$regml(1),%sep,%m,%notsep)
+                %r = $regex.ShowErrorInGroup(%target,%temp,%sep,%m,%notsep)
               }
               else { %cmd $regex.ShowErrorInGroup(%target,$regml(1),%sep,%m,%notsep) }
             }
