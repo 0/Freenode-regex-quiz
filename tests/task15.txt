@@ -14,6 +14,29 @@ Not matching 3start. The text 3end is optional.
 aaa sssstartttt bbb end
 Not matching 3aaa sssstartttt bbb end yet
 
+validation: "isin", "sssstartttt"
+You're not supposed to have 03sssstartttt in your expression. Try again.
+
+== 0
+aaa sssstartttt bbb
+Not matching 3aaa sssstartttt bbb yet
+
 != 0
-aaa end start
+abc end start
 It shouldn't match 3aaa end start. Remember the regex engine starts anywhere in the string if your pattern is not anchored. Check char by char if end is not present.
+
+!= 1
+aaa eenndd ssstarttt bbb
+Not matching 03aaa eenndd ssstarttt bbb yet
+
+!= 1
+aaa eenndd sssstartttt bbb end
+Not matching 3aaa eenndd sssstartttt bbb end yet
+
+!= 1
+%€£@"#¤"# start %€£@&#"¤ end %€£@
+Any character is allowed in the text.
+
+!= 1
+%€£@"#¤"# eenndd %€£@"#¤"# sssstartttt %€£@"#¤"# end %€£@"#¤"#
+Any character is allowed in the text.
