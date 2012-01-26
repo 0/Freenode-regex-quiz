@@ -1,6 +1,10 @@
 ; Task 1: Word Boundaries
 ; Match the word 'word' anywhere in the input string.
 
+> 1
+lolwut
+You're matching something entirely else... Use the example given in the task description.
+
 == 0
 word
 You are not even matching 06word. Use the example given in the task description.

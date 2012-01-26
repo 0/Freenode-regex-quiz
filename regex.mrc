@@ -264,7 +264,7 @@ alias -l regex.ShowErrorIn {
 }
 alias -l regex.ShowErrorInGroup { returnex $regex.ShowErrorIn($1,$2,$3,$4,$5,$true) }
 alias -l regex.Explain {
-  var %target = $1, %pattern = $2, %lvl = $3
+  var %target = $removecs($1,_SPECIAL,_ESCAPE), %pattern = $2, %lvl = $3
   var %imode = $4, %smode = $5, %mmode = $6, %xmode = $7, %XXmode = $8, %Umode = $9
   var %N, %i, %r, %null = (null, matches any position)
   if ( %pattern == $null ) { $regex.RefOut(%target,%lvl) %null %quant }
@@ -457,6 +457,26 @@ alias -l regex.Explain {
           %r = $regex.Explain.Recurse(%target,$regml(posix,%a),%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
           inc %a
         }
+
+        ; match \s and such
+        noop $regex(explainshit,$regml(ncharclass,1),/(*UTF8)(?:\[:[^\]]*:\]|\\Q.*?\\E|(?|((?<!\\)(?:\\\\))|(?<!\\)(?:\\\\)*((?:\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|(?:00?)?[1-7]|0)|\\c[A-_]|\\x[\dA-F]{2}|\\.))))/g)
+        var %a = 1
+        while (%a <= $regml(explainshit,0)) {
+          var %e = $regml(explainshit,%a)
+          if (%e != \\) {
+            if (%e isincs \A\B\C\G\H\K\N\R\X\Z) {
+              %r = $regex.Explain.Special.Literal(%target,%e,%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
+            }
+            elseif (%e isincs \b) {
+              %r = $regex.Explain.Special.Escape(%target,%e,%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
+            }
+            else {
+              %r = $regex.Explain.Recurse(%target,%e,%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
+            }
+          }
+          inc %a
+        }
+
       }
       elseif ( $regex(charclass,%token,/(*UTF8)^\[(.*)\]$/) ) { 
         var %z = $regsubex($regml(charclass,1),/(*UTF8)\\([^pPXxCbBDsSwWhHvVRcgGAzZKQEd0-9aefnrt-\\])/gi,\1)
@@ -468,8 +488,33 @@ alias -l regex.Explain {
           %r = $regex.Explain.Recurse(%target,$regml(posix,%a),%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
           inc %a
         }
+
+        ; match \s and such
+        noop $regex(explainshit,$regml(charclass,1),/(*UTF8)(?:\[:[^\]]*:\]|(?|(\\Q.*?\\E)|((?<!\\)(?:\\\\))|(?<!\\)(?:\\\\)*((?:\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|(?:00?)?[1-7]|0)|\\c[A-_]|\\x[\dA-F]{2}|\\.))))/g)
+        var %a = 1
+        while (%a <= $regml(explainshit,0)) {
+          var %e = $regml(explainshit,%a)
+          if (%e != \\) {
+            if (%e isincs \A\B\C\G\H\K\N\R\X\Z) {
+              %r = $regex.Explain.Special.Literal(%target,%e,%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
+            }
+            elseif (%e isincs \b) {
+              %r = $regex.Explain.Special.Escape(%target,%e,%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
+            }
+            else {
+              %r = $regex.Explain.Recurse(%target,%e,%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
+            }
+          }
+          inc %a
+        }
       }
-      elseif ( $regex.Explain.Literal(%token,%imode,%smode,%mmode,%xmode,%XXmode,%Umode) != $null ) { %refout %token %quant $v1 }
+      elseif (%token === \b && _SPECIAL_ESCAPE isin $1) {
+        %refout %token %quant Backspace character
+      }
+      elseif ( $regex.Explain.Literal(%token,%imode,%smode,%mmode,%xmode,%XXmode,%Umode) != $null ) { 
+        var %v1 = $v1
+        %refout $iif(_SPECIAL isin $1, \) $+  %token %quant %v1 
+      }
       elseif ( $regex(badbackref,%token,/(*UTF8)^\\(\d)$) ) { %refout %token %quant Possible error - Backreference to undefined numbered capturing group $regml(badbackref,1) }
       else { 
         %refout %token %quant 5(*) not described yet
@@ -477,6 +522,14 @@ alias -l regex.Explain {
     }
   }
   else { $regex.RefOut(%target,%lvl) %token 4Unrecognized structure in %pattern 5No description for it yet (nothing's perfect) }
+}
+
+alias regex.Explain.Special.Escape {
+  noop $regex.Explain.Recurse($1 $+ _SPECIAL_ESCAPE,$2,$3,$4,$5,$6,$7,$8,$9)
+}
+
+alias regex.Explain.Special.Literal {
+  noop $regex.Explain.Recurse($1 $+ _SPECIAL,$remove($2,\),$3,$4,$5,$6,$7,$8,$9)
 }
 
 alias getCharClass {
@@ -501,7 +554,7 @@ alias getCharClass {
 alias highlightClasses {
   var %newToken = $1-, %msg
   ;var %re2 = /(*UTF8)(?|((?<!\\)(?:\\\\))|(?<!\\)(?:\\\\)*((?:\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|(?:00?)?[1-7]|0)|\\c[A-_]|\\x[\dA-F]{2}|(?!\\[dpPXxCbBDsSwWhHvVRcgGAzZKQE\-])(?:[^\\]|\\.))))-(?|((?<!\\)(?:\\\\))|(?<!\\)(?:\\\\)*((?:\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|(?:00?)?[1-7]|0)|\\c[A-_]|\\x[\dA-F]{2}|(?!\\[dpPXxCbBDsSwWhHvVRcgGAzZKQE\-])(?:[^\\]|\\.))))/g
-  var %re2 = /(*UTF8)(?:\[:[^\]]*:\]|\\Q.*?\\E|(?|((?<!\\)(?:\\\\))|(?<!\\)(?:\\\\)*((?:\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|(?:00?)?[1-7]|0)|\\c[A-_]|\\x[\dA-F]{2}|(?!\\[dpPXxCbBDsSwWhHvVRcgGAzZKQE\-])(?:[^\\]|\\.))))-((?<!\\)(?:\\\\)|\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|(?:00?)?[1-7]|0)|\\c[A-_]|\\x[\dA-F]{2}|(?!\\[dpPXxCbBDsSwWhHvVRcgGAzZKQE\-])(?:[^\\]|\\.)))/g
+  var %re2 = /(*UTF8)(?:\[:[^\]]*:\]|\\Q.*?\\E|(?|((?<!\\)(?:\\\\))|(?<!\\)(?:\\\\)*((?:\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|(?:00?)?[1-7]|0)|\\c[A-_]|\\x[\dA-F]{2}|(?!\\[dpPXxCbBDsSwWhHvVRcgGAzZKQENR\-])(?:[^\\]|\\.))))-((?<!\\)(?:\\\\)|\\(?:[1-3][0-7]{2}|0?[1-7][0-7]|(?:00?)?[1-7]|0)|\\c[A-_]|\\x[\dA-F]{2}|(?!\\[dpPXxCbBDsSwWhHvVRcgGAzZKQENR\-])(?:[^\\]|\\.)))/g
   if ($regex(er, %newToken, %re2) && - isin %newToken) {
     var %i = 1, %a = $regml(er, 0)
     %msg = 7[3valid7 character ranges in green, 4invalid7 in red7]
