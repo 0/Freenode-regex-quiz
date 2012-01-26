@@ -1,0 +1,19 @@
+; start before end
+; task 15
+; 2012-01-26
+
+== 0
+start end
+You're not matching the 03start end yet.
+
+== 0
+start
+Not matching 3start. The text 3end is optional.
+
+== 0
+aaa sssstartttt bbb end
+Not matching 3aaa sssstartttt bbb end yet
+
+!= 0
+aaa end start
+It shouldn't match 3aaa end start. Remember the regex engine starts anywhere in the string if your pattern is not anchored. Check char by char if end is not present.
