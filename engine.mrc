@@ -149,8 +149,9 @@ alias checkTask {
   return
   :error
   if (* /if: * unknown * iswm $error) {
+    var %err = $v2
     reseterror
-    echo -egac info Test %testNum contains an invalid comparison.
+    echo -egac info Test %testNum contains an invalid comparison: %err
     goto back
   }
 }
@@ -158,7 +159,7 @@ alias checkTask {
 ; /regexDist <ID>
 ; Distribute processing time between all those who have requested to have 
 ; a regex validated, starting with <ID>.
-
+alias trim return $eval($1-,2)
 alias regexDist {
   tokenize 10 $+($1, $lf, $hget(regexDist, $1))
   if ($regexUser($1, task $+ $3, attempts) !isnum 1-) {
@@ -177,17 +178,14 @@ alias regexDist {
         if (%line != $null) {
           inc %testNum
           var %tests = $regsubex(%line, /^\s*(?:sub|regml|validate):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/g
-          noop $regex(validate, %tests, %regexQuote)
-          var %t = $regml(validate, 0)
           if (regml: isin %line) {
             var %a = 2
-            noop $regex(regexDist, $regml(validate, 1), $4)
-            while ($gettok(%tests, %a, 44)) {
-              var %v1 = $v1, %regml = $regml(regexDist, $gettok(%v1, 1, 32)), %regmlOp = $gettok(%v1, 2, 32), %equals = $regsubex($gettok(%v1, 3, 32), %regexQuote, \1)
+            noop $regex(regexDist, $trim($gettok(%tests,1,44)), $4)
+            while ($trim($gettok(%tests, %a, 44))) {
+              var %v1 = $v1, %regml = $regml(regexDist, $gettok(%v1, 1, 32)), $&
+                %regmlOp = $gettok(%v1, 2, 32), $&
+                %equals = $gettok(%v1, 3-, 32)
               if (%regml %regmlOp %equals) {
-                %failure = $false
-              }
-              else {
                 %failure = $true
                 break
               }
@@ -195,30 +193,28 @@ alias regexDist {
             }
           }
           elseif (sub: isin %line) {
-            var %subText = $regml(validate, 1)
-            var %subRepl = $regml(validate, 2)
+            var %subText = $trim($gettok(%tests,1,44))
+            var %subRepl = $trim($gettok(%tests,2,44))
             if (%subRepl == USER_INPUT && $2) {
               %subRepl = $5
             }
-            var %subComp = $regml(validate, 3)
-            var %subEquals = $regml(validate, 4)
+            var %subComp = $trim($gettok(%tests,3,44))
+            var %subEquals = $trim($gettok(%tests,4,44))
             var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
             if (%regsubex %subComp %subEquals) {
               %failure = $true
             }
           }
           elseif (validate: isin %line) {
-            var %a = 2, %comp = $regml(validate, 1)
+            var %a = 2, %comp = $trim($gettok(%tests,1,44))
             var %re = $replace($4, \/, /)
-            while ($regml(validate, %a)) {
-              var %v1 = $eval($v1,2)
+            while ($trim($gettok(%tests, %a, 44))) {
+              var %v1 = $trim($v1)
               if (%v1 %comp %re) {
                 %failure = 1
               }
               inc %a
             }
-          }
-          elseif (reval: isin %line) {
           }
           elseif ($2) {
             %input = %line
@@ -230,7 +226,12 @@ alias regexDist {
             if (%input == $!null) {
               %input = $null
             }
-            %regex = $regex(regexDist, %input, $4)
+            if (%input == EMPTY_QUOTES) {
+              %regex = $regex(regexDist, "", $4)
+            }
+            else {
+              %regex = $regex(regexDist, %input, $4)
+            }
             %op = $gettok(%line, 1, 32)
             %v2 = $gettok(%line, 2, 32)
           }

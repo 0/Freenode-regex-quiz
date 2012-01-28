@@ -809,18 +809,18 @@ alias -l regex.ExplainModifiers {
   }
 }
 alias re {
-  var %input = $2-, %sre = /(*UTF8)^(?:(.*)\s)s([^\w\s\\])((?:\\.|(?!\\|\2).)*)\2((?:\\.|(?!\\|\2).)*)\2(.*)\s*$/, $&
-    %mre1 = /(*UTF8)^(.*)\sm?([^\w\s\\])((?:\\.|(?!\\|\2).)*)\2(.*)\s*$/, %ret = $iif($isid,returnex,echo -ti12a), %retData
-  ; [gisSmoxXAU] replaced with .* in order to allow explain engine to find the error
+  var %input = $2-, %sre = /(*UTF8)^(?:(.*)\s)s([^\w\s\\])((?:\\.|(?!\\|\2).)*)\2((?:\\.|(?!\\|\2).)*)\2([^\|\^\(\)\[\{\.\+\*\?\\\$\#]*)\s*$/, $&
+    %mre1 = /(*UTF8)^(.*)\sm?([^\w\s\\])((?:\\.|(?!\\|\2).)*)\2([^\|\^\(\)\[\{\.\+\*\?\\\$\#]*)\s*$/, %ret = $iif($isid,returnex,echo -ti12a), %retData
+  ; [gisSmoxXAU] replaced with [^\|\^\(\)\[\{\.\+\*\?\\\$\#]* in order to allow explain engine to find the error
   if ($regex(sre,%input,%sre) isnum 1-) {
-    var %text = $regml(sre,1), %delim = $regml(sre,2), %pat = $regml(sre,3), %repl = $regml(sre,4), %flags = $regml(sre,5)
+    var %delim = $regml(sre,2), %pat = $regml(sre,3), %repl = $regml(sre,4), %flags = $regml(sre,5)
     if (%delim != /) {
       if (%delim isin |^()[{.+*?\$#) var %escape = \ $+ %delim
       else var %escape = %delim
       var %pat = $regsubex(%pat,/(*UTF8)(*UTF8)(?<!\\)((?:\\\\)*)\\( $+ %escape $+ )/g,\1\2), %pat = $regsubex(%pat,/(*UTF8)(?<!\\)((?:\\\\)*)\//g,\1\/)
     }
     var %repl = $regsubex(%repl,/(*UTF8)(?<!\\)((?:\\\\)*)\\( $+ %delim $+ )/g,\1\2), %result
-    if ($regsub(repat,%text,$+(/(*UTF8),%pat,/,%flags),%repl,%result) isnum 1-) {
+    if ($regsub(repat,$regml(mre,1),$+(/(*UTF8),%pat,/,%flags),%repl,%result) isnum 1-) {
       %retData = $+([Result:,$chr(32),$v1,]) %result
     }
     else {
@@ -828,17 +828,18 @@ alias re {
     }
   }
   elseif (($regex(mre,%input,%mre1) isnum 1-)) {
-    var %text = $regml(mre,1), %delim = $regml(mre,2), %pat = $regml(mre,3), %flags = $regml(mre,4)
+    var %delim = $regml(mre,2), %pat = $regml(mre,3), %flags = $regml(mre,4)
     if (%delim != /) {
       if (%delim isin |^()[{.+*?\$#) var %escape = \ $+ %delim
       else var %escape = %delim
       var %pat = $regsubex(%pat,/(*UTF8)(?<!\\)((?:\\\\)*)\\( $+ %escape $+ )/g,\1\2), %pat = $regsubex(%pat,/(*UTF8)(?<!\\)((?:\\\\)*)\//g,\1\/)
     }
     var %result
-    if ($regex(repat,%text,$+(/(*UTF8),%pat,/,%flags)) isnum 1-) {
+    if ($regex(repat,$regml(mre,1),$+(/(*UTF8),%pat,/,%flags)) isnum 1-) {
       %result = [Result: $v1 $+ ] $chr(9999)
       var %n = $regml(repat,0), %i = 1
-      var %m = $re_consumed(re,%text,$+(/(*UTF8),%pat,/,%flags),1), %pos = $re_consumed(re,1).pos
+      set -n %m $re_consumed(re,$regml(mre,1),$+(/(*UTF8),%pat,/,%flags),1)
+      var %pos = $re_consumed(re,1).pos
       var %fullmatch = $+([0:,%pos,-,$iif(%m == $null,?,$calc(%pos + $len(%m) -1)),:,$chr(32),%m,])
 
       while (%i <= %n) {
