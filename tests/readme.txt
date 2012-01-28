@@ -10,43 +10,47 @@ The second line is the input text passed to $regex() for testing purposes.
 
 The third line is an error message to return should the test fail.
 
-You can now also implement tests that validate backrefs. For example, you can validate the content of backrefs. The syntax looks like this
-regml: <validation>
-Error message
+-------------------------------------
+IN DEPTH VALIDATION
+-------------------------------------
 
-<validation> should look like "string", regml_id == value, regml_id2 == value2, ..., regml_idN = valueN
-If you want to use quotes, escape them as such: \"
+You have three extended ways to validate an expression. These are with:
+	- regml:
+	- sub:
+	- validate:
+These work regardless of task type.
+All of these functions are two-liners. One validation, next error message.
 
-Real life example
+* regml:
+This function allows you to check the contents of backrefs, including how many backrefs there are set.
+Example:
+regml: content to match against, regml_id1 comparator1 value1, ..., regml_idN comparatorN valueN
+Real life use:
+regml: this is a test, 0 != 1, 1 !== this is a test
+It runs an if-statement like this:
+if (regml(0) != 1) { error }
+if (regml(1) !== this is a test) { error }
+If you want to check if a backref is null, use $null
 
-regml: "match against this string", 0 == 2, 1 === "string", 2 === "this"
-You are not setting 2 backrefs where the first equals "string" and the other "this".
 
-
-You can also include code in the messages (and infact, in the code when you compare things). For example
-
-!= 1
-test
-Here is a message with a $iif($true,if conditional, wtf) $+ .
-
------
-
-Added feature to add substitution comparison to any task
-sub: "text", "replacement", "comparator", "expected output"
-replacement can be \1 etc too
+* sub:
+This function allows you run a substitution on a string.
+sub: text, replacement, comparator, output
+If you do not wish to specify replacement and use the user submitted one, use USER_INPUT. If you want to replace with nothing, leave the field empty
 Use USER_INPUT as replacement (in quotes) if you want to use the users replacement string.
 
------
 
-You can not create tests to validate the regex itself using mirc built in comparator functions. Such as "isin", "iswm" etc etc.
-Syntax is:
-validate: "comparator", "comparison1", "comparison2", ...., "comparisonN"
+* validate:
+This function allows you to validate the regex using mirc built in comparator functions. Such as "isin", "iswm" etc etc.
+validate: comparator, comparison1, comparison2, ...., comparisonN
 real life example:
 validate: "!isin", "word", "word2"
-Word or word2 is not in your regex
+This means word and word2 is not in your regex
 
-This gets translated tp
+This gets translated to
 if (word !isin <your regex> || word2 !isin <your regex>) { display error }
 
------
-reval: is going to allow regex validation of the regex
+
+WARNING:
+These functions all use COMMA to separate things. You can not use it in your test strings. Yet.
+You can use $chr(44) if you want to use a comma in your strings. Like: test $+ $chr(44) => test,

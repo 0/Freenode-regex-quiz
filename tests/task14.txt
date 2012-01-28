@@ -44,13 +44,13 @@ Not working, sorry. Read the task again. It matches 6word word wordnot. Should
 test test test hello hello hello
 It returns the first word, but what if there were 2 words repeated? Did you by any chance forget about the  global modifier? If your expression is global already, but you can't get past this error you need to look over the greedyness of your pattern. You are most likely allowing the engine to consume too much.
 
-regml: "test test test test hello hello hello hello", 0 == 2, 1 == "test", 2 == "hello"
+regml: test test test test hello hello hello hello, 0 != 2, 1 != test, 2 != hello
 You are not setting the correct backreferences. You should only set one for each group of repeated words.
 
 < 2
 word1 word2 word1 word2 word1 word2
 It's not working when more than 1 word is repeated. Try 06"word1 word2 word1 word2 word1 word2". The engine is probably consuming chars for the first match, not allowing the second match to occur. Can you think of a regex construct that doesn't consume the chars?
 
-; the $+() stuff evaluates by mirc inside the if-statement automatically
-validate: "isin", "$+($chr(123),3,$chr(44),$chr(125))"
+; the $+ stuff evaluates by mirc inside the if-statement automatically
+validate: isin, $chr(123) $+ 3 $+ $chr(44) $+ $chr(125)
 If you think about it, 03{3,} is exactly the same as 03{3} in a lookaround. Because a lookaround only returns true/false and the engine doesn't move. Thus, matching 03{3,} necessarily implies matching 03{3}. Please change it to make it more efficient.

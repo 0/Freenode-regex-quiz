@@ -8,10 +8,10 @@
 ; basically says if after a regsub on x the result isnt x, something is wrong, probably meta character
 ; I however like the "sub:" feature more due to its versatility.
 
-sub: "x", "-", "==", "-"
+sub: x,-,===,-
 Come on... You should know you have to escape meta characters by now.
 
-sub: ".a.", "-", "==", ".-"
+sub: .a.,-,===,.-
 You need to replace all occurrences properly without consuming any other characters in the string!
 
 a.b

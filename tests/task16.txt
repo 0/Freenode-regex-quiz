@@ -18,8 +18,16 @@ Don't touch non-digits!
 4*2*
 Don't just replace all the even digits. Replace all those in the even position of the string.
 
-sub: "12a45", "USER_INPUT", "!=", "1*a4*"
+foobar8
+foobar8
+The text 3foobar8 should remain unchanged. The regex engine will try to match in every position unless you anchor it somehow. Otherwise, it may attempt a match from 3fooba4<here>3r8. You must read 12http://www.regular-expressions.info/continue.html
+
+a1b2cde3~g45hi6
+a*b*cde*~g4*hi6
+You were right to anchor it with \G. And you are replacing all digits that match from the beginning of the string. However, if there's a character which isn't a digit that you need to skip, you should also try to match it to allow a subsequent match in a digit. You're replacing 3a1b2cde3~g45hi6 with 3a*b*cde3~g45hi6 instead of 6a*b*cde*~g4*hi6
+
+sub: 12a45, USER_INPUT, ===, 1*a4*
 The digit you replace isn't required to follow another digit.
 
-sub: "12ab4c5", "USER_INPUT", "!=", "1*ab4c*"
+sub: 12ab4c5, USER_INPUT, ===, 1*ab4c*
 "Even position" refers to position in the entire string, not just among the digits.

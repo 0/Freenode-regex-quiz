@@ -1,0 +1,59 @@
+; text in quotes
+; task 18
+; 2012-01-28
+
+regml: "abc", 0 < 1
+Start out by setting a backreference or you won't get far.
+
+regml: "text in quotes", 1 != text in quotes
+Not returning 3text in quotes in the backreference from the line 6"text in quotes". If you repeat a backreference, it will overwrite itself. For example, with 03aaa /^(a)*$/, \1 = a (it's overwritten)
+
+regml: "quoted shit", 0 > 1
+You're using more than 1 group. Please only allow your pattern to set one backreference.
+
+!= 1
+"foo bar"
+You're not matching 03"foo bar".
+
+!= 1
+"¤ asd %#¤§§§&"
+Any character except " is valid inside the quotes. You can use 6[^"]
+
+!= 1
+EMPTY_QUOTES
+Empty quotes 03"" are valid. You should match it and return a null value in the backreference.
+
+!= 0
+aa"bbb"
+It shouldn't match 3aa"bbb". Anchor it to the start and end of string please
+
+!= 0
+"text"with quote"
+It shouldn't match 3"text"with quote". Only escaped quotes are allowed inside the main (opening and closing) quotes. You could use [^"]
+
+regml: "quoted \"shit", 0 > 1
+You're using more than 1 group. Please only allow your pattern to set one backreference.
+
+!= 1
+"valid \" escaped quote"
+A 6\ escapes any character. The text 3"valid \" escaped quote" should be matched. Escaped quotes should be allowed.
+
+!= 0
+"aa\\" bb"
+A 6\ escapes ONLY ONE character. The text 3"aa \\" bb" should be invalid. It contains a escaped \ and an unescaped " (invalid). Instead of checking if a " is preceded by \, just match any escape. Also, be careful with the backtracking.
+
+!= 0
+"unbalanced \\\\" quotes"
+A 6\ escapes ONLY ONE character. Therefore, the text 3"unbalanced \\\\" quotes" should be invalid. It contains two escaped \ and an unescaped " (invalid)
+
+!= 0
+"unbalanced \\\\\\" quotes"
+A 6\ escapes ONLY ONE character. Therefore, the text 3"unbalanced \\\\\\" quotes" should be invalid. It contains three escaped \ and an unescaped " (invalid)
+
+!= 1
+"balanced \\\" quotes"
+A 6\ escapes ONLY ONE character. Therefore, the text 3"balanced \\\" quotes" should be valid. It contains a escaped \ and a escaped " (valid)
+
+!= 0
+"\\\"
+A 6\ escapes ONE character. Therefore, the text 3"\\\" should be invalid. It contains a escaped \ and a escaped ", but there's no quote closing it. Try to parse every char from start to end (matching 2 chars if it's a \ or else matching any char except ")
