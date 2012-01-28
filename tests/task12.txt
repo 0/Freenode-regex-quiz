@@ -44,7 +44,7 @@ The domain must be allowed to contain 06several subdomains.
 
 != 0
 x@.example.com
-6.example.com is not a valid domain because one of the parts begins with a digit.
+06.example.com is not a valid domain.
 
 != 0
 x@foo..example.com
@@ -79,7 +79,7 @@ x@xn_foo.example.com
 Underscores (03"_") are not allowed in a domain name.
 
 ; International domains
-!= 1
+!= 0
 x@xn--foo.example.com
 Two hyphens in a row must be allowed.
 

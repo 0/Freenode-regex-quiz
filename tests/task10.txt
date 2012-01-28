@@ -2,7 +2,7 @@
 
 == 0
 abc test#
-You're not even matching a valid string. Try again.
+You're not matching a valid string. Try again.
 
 regml: "test#", 0 >= 1
 I told you to 06capture the character. This is done with backreferences. If you don't know this by now, you're in deep water, my friend.
@@ -19,6 +19,9 @@ You are consuming the hash character, I told you not to do this.
 != 5
 a#bc#def#ghij#klmno#
 You are supposed to catch all occurrences!
+
+regml: "a#bc# -#", 0 == 3, 1 == "a", 2 == "c", 3 == "-"
+You are not setting the correct backreferences. Check the example in the task description again.
 
 regml: "##", 1 == "#"
 The character you should be catching could be a hash character too.

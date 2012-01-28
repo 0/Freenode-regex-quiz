@@ -14,8 +14,16 @@ Not matching 3start. The text 3end is optional.
 aaa sssstartttt bbb end
 Not matching 3aaa sssstartttt bbb end yet
 
-validation: "isin", "sssstartttt"
+validate: "isin", "sssstartttt"
 You're not supposed to have 03sssstartttt in your expression. Try again.
+
+!= 0
+lol wtf
+It's matching a text without 03start. Fix it
+
+!= 0
+lol wtf end
+It's matching a text without 03start. Fix it
 
 == 0
 aaa sssstartttt bbb
@@ -40,3 +48,14 @@ Any character is allowed in the text.
 != 1
 %€£@"#¤"# eenndd %€£@"#¤"# sssstartttt %€£@"#¤"# end %€£@"#¤"#
 Any character is allowed in the text.
+
+!= 1
+aaa start end start
+It should match 3aaa start end start. By now you should be wondering if you have to anchor it to ^. And if you do anchor it, how to tell in a lookahead if it's BEFORE "start". Try to make your pattern MATCH char by char from the start to make it fail if it encounters "end". For example /(?!end)./ matches a char the way you no want to loop it
+
+regml: "start end", 0 == 0
+I don't want backreferences if there's nothing that needs to be retrieved. Use (?:group) instead of (group)
+
+!= 0
+end start end start end start end start
+It shouldn't match "end start end start end start end start".

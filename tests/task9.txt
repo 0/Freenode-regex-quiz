@@ -36,6 +36,22 @@ You must allow a 06negative sign (03"-").
 You must allow a 06positive sign (03"+").
 
 != 1
++3,e2
+You must allow a 06positive sign (03"+") even if there's an exponent in the number.
+
+!= 1
++3.e2
+You must allow a 06positive sign (03"+") even if there's an exponent in the number.
+
+!= 1
+-3,e2
+You must allow a 06positive sign (03"-") even if there's an exponent in the number.
+
+!= 1
+-3.e2
+You must allow a 06positive sign (03"-") even if there's an exponent in the number.
+
+!= 1
 923.456e789
 You must allow an 06exponent part, separated by an 03"e". For example, 060.314159e1.
 

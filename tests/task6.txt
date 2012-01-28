@@ -4,6 +4,22 @@
 regml: "aaa", 0 == 1
 You should start by setting a backreference to store the data in.
 
+aaaaa
+aaa
+You should only remove strings that fit the task description. They are finite in length. For example, 03aaaaa should become 03aaa.
+
+aaaaaa
+aa
+You're not replacing the strings according to the task description. For example, 03aaaaaa should become 03aa.
+
+%%%aaabbbccczzzz!!!***
+%abczz!*
+You're not removing all types of repeated characters. It's not only the letter keys that get stuck, after all.
+
+pplease
+pplease
+Don't alter strings that don't fit the description. You should not touch the string 06pplease. Only replace strings that match the task description (two consecutive repeats)
+
 aa aa aa
 aa aa aa
 Don't replace strings that don't fit the description.
@@ -19,10 +35,6 @@ You are not removing the duplicate chars properly. Remember, I want to keep the 
 aaammm
 am
 You're not removing all the duplicated characters! My keyboard might jam several 06tttimes in a sente06nnnce.
-
-%%%aaabbbccczzzz!!!***
-%abczz!*
-You're not removing all types of repeated characters. It's not only the letter keys that get stuck, after all.
 
 HHHHKKKKKK
 HHKK
