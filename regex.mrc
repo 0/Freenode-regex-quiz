@@ -127,7 +127,7 @@ alias -l regex.MakeTree {
   var %target = $1, %pattern = $2-
   ;var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()(\/)|()())/)
   ; var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z])|()())/)
-  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^\\a-z0-9A-Z|^()[{}.+*?$ $+ $chr(4000) $+ $chr(1000) $+ ])|()())/)
+  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^\\a-z0-9A-Z|#^()[{}.+*?$ $+ $chr(4000) $+ $chr(1000) $+ ])|()())/)
   var %sep = $replace($regml(2),\,\\,',\',$chr(35),\ $+ $chr(35))
 
   if (%sep isin |^()[{.+*?$#) {
@@ -1022,7 +1022,7 @@ alias re_consumed {
 
 alias malformedRegex {
   var %pattern = $2-
-  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z|\\^()[{}.+*?$ $+ $chr(4000) $+ $chr(1000) $+ ])|()())/)
+  var %r = $regex(%pattern,/(*UTF8)^\s*+(?:(m)(.)|()([^a-z0-9A-Z#|\\^()[{}.+*?$ $+ $chr(4000) $+ $chr(1000) $+ ])|()())/)
   var %sep = $replace($regml(2),\,\\,',\',$chr(35),\ $+ $chr(35))
   if (%sep isin |^()[{.+*?$) {
     return Please don't use meta characters as delimiters, it's no good.
