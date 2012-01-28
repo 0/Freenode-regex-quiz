@@ -34,6 +34,7 @@ Here is a message with a $iif($true,if conditional, wtf) $+ .
 Added feature to add substitution comparison to any task
 sub: "text", "replacement", "comparator", "expected output"
 replacement can be \1 etc too
+Use USER_INPUT as replacement (in quotes) if you want to use the users replacement string.
 
 -----
 

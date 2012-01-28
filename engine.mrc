@@ -197,6 +197,9 @@ alias regexDist {
           elseif (sub: isin %line) {
             var %subText = $regml(validate, 1)
             var %subRepl = $regml(validate, 2)
+            if (%subRepl == USER_INPUT && $2) {
+              %subRepl = $5
+            }
             var %subComp = $regml(validate, 3)
             var %subEquals = $regml(validate, 4)
             var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
