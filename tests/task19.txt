@@ -1,0 +1,26 @@
+; replace text not code
+; task 19
+; 2012-01-29
+
+micro
+&micro;
+Ouch. Start by replacing "micro" with "&micro;"
+
+sub: lol text, $null, !=, lol text
+You're matching any text! Type !task
+
+30 micromol/l
+30 &micro;mol/l
+It should replace: '0330 micromol/l' with '0330 &micro;mol/l'
+
+micro asd micro asdasd micro
+&micro; asd &micro; asdasd &micro;
+It's not replacing a line with 3micro repeated several times.
+
+&micro;
+&micro;
+It's matching "micro" inside a tag.
+
+&micro; micro
+&micro; &micro;
+It's not working. 03&micro; micro should become 06&micro; &micro;
