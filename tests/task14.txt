@@ -24,17 +24,25 @@ You're matching strings with no repeated words.
 test TEST tEsT
 You're regex is case sensitive? How did you even get to this task?
 
+== 0
+word word word word
+It doesn't match "word word word word". Remember that after a lookaround, the regex engine goes back to the position it was before attempting the assertion. It's explained in 12http://www.regular-expressions.info/lookaround2.html
+
 != 0
 h&llo h&llo h&llo h&llo
 You should only match repeated 03words.
 
+== 0
+word! -word! (word)
+You haven't learned about word boundaries yet? It doesn't match "word! -word! (word)".
+
+== 0
+l33t l33t l33t
+Any idea why it didn't return the word "l33t". Some people "7alk lik3 7ha7" on irc. You can use \w for a word character (\w matches 6[A-Za-z0-9_]).
+
 != 0
 word word wordnot
 Not working, sorry. Read the task again. It matches 6word word wordnot. Should I remind you of word boundaries again?
-
-!= 1
-hello hello hello hello hello
-If a certain word is repeated many times, you're setting more than 1 backreference (common mistake, I know). You don't necessarily need to match the first occurrence of the word. Can you avoid a match in "word word word word", and match "word word word word"? (Hint: match if it's followed by 2 occurences, don't match if it's followed by 3)
 
 != 0
 word notword word
@@ -44,12 +52,20 @@ Not working, sorry. Read the task again. It matches 6word word wordnot. Should
 test test test hello hello hello
 It returns the first word, but what if there were 2 words repeated? Did you by any chance forget about the  global modifier? If your expression is global already, but you can't get past this error you need to look over the greedyness of your pattern. You are most likely allowing the engine to consume too much.
 
+!= 1
+hello hello hello hello hello
+If a certain word is repeated many times, you're setting more than 1 backreference (common mistake, I know). You don't necessarily need to match the first occurrence of the word. Can you avoid a match in "word word word word", and match "word word word word"? (Hint: match if it's followed by 2 occurences, don't match if it's followed by 3)
+
 regml: test test test test hello hello hello hello, 0 != 2, 1 != test, 2 != hello
 You are not setting the correct backreferences. You should only set one for each group of repeated words.
 
 < 2
 word1 word2 word1 word2 word1 word2
 It's not working when more than 1 word is repeated. Try 06"word1 word2 word1 word2 word1 word2". The engine is probably consuming chars for the first match, not allowing the second match to occur. Can you think of a regex construct that doesn't consume the chars?
+
+; the $+ stuff evaluates by mirc inside the if-statement automatically
+validate: isin, $chr(123) $+ 2 $+ $chr(44) $+ $chr(125)
+If you think about it, 03{2,} is exactly the same as 03{2} in a lookaround. Because a lookaround only returns true/false and the engine doesn't move. Thus, matching 03{2,} necessarily implies matching 03{2}. Please change it to make it more efficient.
 
 ; the $+ stuff evaluates by mirc inside the if-statement automatically
 validate: isin, $chr(123) $+ 3 $+ $chr(44) $+ $chr(125)

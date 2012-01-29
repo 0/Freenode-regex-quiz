@@ -28,19 +28,15 @@ You must replace consecutive dots too. You must not consume the following charac
 
 1.
 1-
-One digit on 03either side is fine.
+Your pattern fails with the text: 3replace1.. The dot should be replaced. It's preceded by a digit, but it isn't followed by a digit. Replace all dots except those SURROUNDED by digits.
 
 abc.5
 abc-5
-One digit on 03either side is fine.
-
-5.
-5-
-One digit on 36either side is fine.
+Your pattern fails with the text: 3replace.1. The dot should be replaced. It's followed by a digit, but it isn't preceded by a digit. Replace all dots except those SURROUNDED by digits.
 
 5.a
 5-a
-One digit on 03either side is fine.
+Your pattern fails with the text: 31.replace. The dot should be replaced. It's preceded by a digit, but it isn't followed by a digit. Replace all dots except those SURROUNDED by digits.
 
 1.2
 1.2
