@@ -17,10 +17,27 @@ micro asd micro asdasd micro
 &micro; asd &micro; asdasd &micro;
 It's not replacing a line with 3micro repeated several times.
 
-&micro;
-&micro;
+;this test is not really complete
+<temicrost>&micro;micro
+<temicrost>&micro;&micro;
+It's matching a tag and replacing "micro" after the tag. However, if the text doesn't have "micro" after the tag, it's backtracking and matching "micro" inside a tag. You don't only have to match the tag; you also have to disallow matching a tag in the rest of the pattern.
+
+&asdmicroasd;
+&asdmicroasd;
+It's matching "micro" inside an entity.
+
+<lolmicrolol>
+<lolmicrolol>
 It's matching "micro" inside a tag.
 
 &micro; micro
 &micro; &micro;
 It's not working. 03&micro; micro should become 06&micro; &micro;
+
+10 <a href="micromol/index.html">micromol</a>&micro;m&sup3;
+10 <a href="micromol/index.html">&micro;mol</a>&micro;m&sup3;
+You're not matching the text '0310 <a href="micromol/index.html">micromol</a>&micro;m&sup3;' correctly.
+
+&i am microman<br />or not;
+&i am &micro;man<br />or not;
+It's not working. What about 3&i am microman<br />or not; You don't want to replace it?

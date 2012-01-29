@@ -12,7 +12,7 @@ on *:TEXT:!submission *:#regex-bot: {
     msg $chan Submission count: $lines($regexDir $+ \submission.txt)
   }
 }
-on $*:TEXT:/^!(commands|help|login|register|regexquiz|stop|submit|info|try|task|newtry|lasttry|mypattern|alltasks)(\s+|$)/Si:?: {
+on $*:TEXT:/^!(commands|help|login|register|regexquiz|stop|submit|info|try|task|newtry|testtry|lasttry|mypattern|alltasks)(\s+|$)/Si:?: {
   var %target = $iif($chan,$v1,$nick)
 
   if (%target !ischan && (%target !ison #regexen && %target !ison #regex && %target !ison #fittit)) {
