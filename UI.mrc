@@ -204,6 +204,7 @@ on $*:TEXT:/^!(commands|help|login|register|regexquiz|stop|submit|info|try|task|
     if ($2 isnum 1-) {
       if ($2 <= $regexTasks) {
         var %f = $findUserFromHost($address($nick,5))
+        ; $2 <= $regexUser(%f,info,reached)
         if ($2 <= $regexUser(%f,info,reached)) {
           noop $validateRegex(%f, $2, $3-)
         }

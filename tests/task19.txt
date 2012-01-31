@@ -17,6 +17,9 @@ micro asd micro asdasd micro
 &micro; asd &micro; asdasd &micro;
 It's not replacing a line with 3micro repeated several times.
 
+sub: &micro;, &micro;, ==, &&micro;;
+If it only was this simple... You're matching 06micro inside of 03&micro; which results in the invalid output 03&&micro;;
+
 ;this test is not really complete
 <temicrost>&micro;micro
 <temicrost>&micro;&micro;
@@ -33,6 +36,34 @@ It's matching "micro" inside a tag.
 &micro; micro
 &micro; &micro;
 It's not working. 03&micro; micro should become 06&micro; &micro;
+
+&micro
+&&micro;
+An entity is only something that starts with 03& and ends with 03;, nothing else. It's not replacing 03"&micro" properly.
+
+micro;
+&micro;;
+An entity is only something that starts with 03& and ends with 03;, nothing else. It's not replacing 03"micro;" properly.
+
+<not a tag micro;
+<not a tag &micro;;
+Only disallow matching if "micro" is in a tag or an entity.
+
+<not a tag micro
+<not a tag &micro;
+Only disallow matching if "micro" is in a tag or an entity.
+
+<not a tag &micro
+<not a tag &&micro;
+Only disallow matching if "micro" is in a tag or an entity.
+
+abc &micro what>
+abc &&micro; what>
+Only disallow matching if "micro" is in a tag or an entity.
+
+abc micro; what>
+abc &micro;; what>
+Only disallow matching if "micro" is in a tag or an entity.
 
 10 <a href="micromol/index.html">micromol</a>&micro;m&sup3;
 10 <a href="micromol/index.html">&micro;mol</a>&micro;m&sup3;

@@ -820,7 +820,7 @@ alias re {
       var %pat = $regsubex(%pat,/(*UTF8)(*UTF8)(?<!\\)((?:\\\\)*)\\( $+ %escape $+ )/g,\1\2), %pat = $regsubex(%pat,/(*UTF8)(?<!\\)((?:\\\\)*)\//g,\1\/)
     }
     var %repl = $regsubex(%repl,/(*UTF8)(?<!\\)((?:\\\\)*)\\( $+ %delim $+ )/g,\1\2), %result
-    if ($regsub(repat,$regml(mre,1),$+(/(*UTF8),%pat,/,%flags),%repl,%result) isnum 1-) {
+    if ($regsub(repat,$regml(sre,1),$+(/(*UTF8),%pat,/,%flags),%repl,%result) isnum 1-) {
       %retData = $+([Result:,$chr(32),$v1,]) %result
     }
     else {
@@ -838,7 +838,7 @@ alias re {
     if ($regex(repat,$regml(mre,1),$+(/(*UTF8),%pat,/,%flags)) isnum 1-) {
       %result = [Result: $v1 $+ ] $chr(9999)
       var %n = $regml(repat,0), %i = 1
-      set -n %m $re_consumed(re,$regml(mre,1),$+(/(*UTF8),%pat,/,%flags),1)
+      set -nu0 %m $re_consumed(re,$regml(mre,1),$+(/(*UTF8),%pat,/,%flags),1)
       var %pos = $re_consumed(re,1).pos
       var %fullmatch = $+([0:,%pos,-,$iif(%m == $null,?,$calc(%pos + $len(%m) -1)),:,$chr(32),%m,])
 
