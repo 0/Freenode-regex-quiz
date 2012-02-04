@@ -1,8 +1,12 @@
 ; repeated words, task 14
 
 == 0
+word word word word
+Not working, sorry. It doesn't match "word word word word". Read the task again or go to 12http://www.regularexpressions.info/brackets.html#usebackrefinregex
+
+== 0
 hello hello hello
-You're not matching repeated words at all.
+I said it must be at least 3 times in the text! It doesn't match "word word word". Read 12http://www.regularexpressions.info/brackets.html#usebackrefinregex
 
 != 0
 hellohellohello
@@ -15,6 +19,10 @@ You're matching words that do not fit the description.
 != 0
 a a a
 You're matching words that do not fit the description.
+
+!= 0
+text without repeated words
+Your pattern matches "text without repeated words", and I want it to match on 3 or more occurences of the SAME word. Read 12http://www.regularexpressions.info/brackets.html#usebackrefinregex
 
 != 0
 one two three

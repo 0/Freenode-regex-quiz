@@ -16,6 +16,22 @@ You should 03only match 06numbers.
 You must match 06integers. An integer is a sequence of decimal digits (030-039).
 
 != 0
+abc123abc
+Your expression implies 03"abc123abc" is a valid floating point number... I'm quite sure it's not.
+
+!= 0
+abc123
+Your expression implies 03"abc123" is a valid floating point number... I'm quite sure it's not.
+
+!= 0
+123abc
+Your expression implies 03"123abc" is a valid floating point number... I'm quite sure it's not.
+
+!= 0
+1a2b3c
+Your expression implies 03"1a2b3c" is a valid floating point number... I'm quite sure it's not.
+
+!= 0
 123x456
 You forgot to escape the 03".". Don't forget that it's a metacharacter!
 
@@ -36,6 +52,26 @@ You must allow a 06negative sign (03"-").
 You must allow a 06positive sign (03"+").
 
 != 1
+1.2e2
+You must allow an 06exponent part, separated by an 03"e". For example, 061.2e2
+
+!= 1
+923.456e789
+You must allow an 06exponent part, separated by an 03"e". For example, 060.314159e1.
+
+!= 1
+823.456E789
+The 06exponent separator could also be in uppercase.
+
+!= 1
+3.e2
+You have got the basic idea right, but sometimes the "exponent" comes directly after the separator (comma or dot). For example, 063.e2
+
+!= 1
+3,e2
+You have got the basic idea right, but sometimes the "exponent" comes directly after the separator (comma or dot). For example, 063.e2
+
+!= 1
 +3,e2
 You must allow a 06positive sign (03"+") even if there's an exponent in the number.
 
@@ -50,14 +86,6 @@ You must allow a 06positive sign (03"-") even if there's an exponent in the 
 != 1
 -3.e2
 You must allow a 06positive sign (03"-") even if there's an exponent in the number.
-
-!= 1
-923.456e789
-You must allow an 06exponent part, separated by an 03"e". For example, 060.314159e1.
-
-!= 1
-823.456E789
-The 06exponent separator could also be in uppercase.
 
 != 1
 .123
@@ -100,9 +128,21 @@ The exponent can also have a 06positive or negative sign.
 Just a dot is not a valid floating number.
 
 != 0
+,
+Just a comma is not a valid floating number.
+
+!= 0
 .e123
 Just a dot and an exponent is not a valid floating number.
 
 != 0
+,e123
+Just a comma and an exponent is not a valid floating number.
+
+!= 0
 ...
 Several dots do not a number make!
+
+!= 0
+,,,
+Several commas do not a number make!

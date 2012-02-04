@@ -5,6 +5,10 @@ uhgiuhergiueh
 uhgiuhergiueh
 Don't touch strings without tags.
 
+before<br>after
+beforeafter
+Your pattern is not working. I believe it's stripping more than it should when applied to the text 6before<BR>after. Use a negated character class -> 12http://www.regular-expressions.info/charclass.html#negated
+
 hsdfh<bufhk>dhfhdk
 hsdfhdhfhdk
 A tag is a started by a 03"<", and ended by a 03">". For example, you should remove 03"<html>".

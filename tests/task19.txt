@@ -9,6 +9,9 @@ Ouch. Start by replacing "micro" with "&micro;"
 sub: lol text, $null, !=, lol text
 You're matching any text! Type !task
 
+sub: text micro, $null, ==, micro
+You're matching the text before "micro". That's alright, but don't forget to include a backreference in the replacement text so as not to remove part of the text.
+
 30 micromol/l
 30 &micro;mol/l
 It should replace: '0330 micromol/l' with '0330 &micro;mol/l'
@@ -21,8 +24,8 @@ sub: &micro;, &micro;, ==, &&micro;;
 If it only was this simple... You're matching 06micro inside of 03&micro; which results in the invalid output 03&&micro;;
 
 ;this test is not really complete
-<temicrost>&micro;micro
-<temicrost>&micro;&micro;
+<temicrost>&micro;micro micro<micro>
+<temicrost>&micro;&micro; &micro;<micro>
 It's matching a tag and replacing "micro" after the tag. However, if the text doesn't have "micro" after the tag, it's backtracking and matching "micro" inside a tag. You don't only have to match the tag; you also have to disallow matching a tag in the rest of the pattern.
 
 &asdmicroasd;
@@ -36,6 +39,10 @@ It's matching "micro" inside a tag.
 &micro; micro
 &micro; &micro;
 It's not working. 03&micro; micro should become 06&micro; &micro;
+
+&micro;mol/microl
+&micro;mol/&micro;l
+If there's an entity before "micro", your pattern fails. Example:3 &micro;mol/microl
 
 &micro
 &&micro;

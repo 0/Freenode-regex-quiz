@@ -2,6 +2,21 @@
 ; Check if an IP-address is valid.
 
 != 1
+172.16.254.1
+Start by trying to match the IP in the task description.
+
+regml: 172.16.254.1, 0 != 0
+Please, don't create backreferences when you don't need them. If you need to group, use (?:regex) ... it's the same as (regex) but it doesn't create a backreference.
+
+!= 1
+004.10.1.007
+004.10.1.007 is a valid IP.
+
+!= 0
+199-255.28.1
+199-255.28.1 is an invalid IP. It shouldn't match
+
+!= 1
 123.124.125.126
 An IP-address is four sets of numbers in the range 060-06255 separated by dots (03".").
 
@@ -17,14 +32,18 @@ Must not allow fewer than four groups of numbers.
 0.0.0.0
 A single zero must be allowed in any group.
 
-!= 0
-123.09.67.89
-Leading zeros must not be allowed.
+;!= 0
+;123.09.67.89
+;Leading zeros must not be allowed.
 
-!= 0
-00.1.2.3
-Leading zeros must not be allowed.
+;!= 0
+;00.1.2.3
+;Leading zeros must not be allowed.
 
 != 0
 256.1.2.3
 Numbers above 03255 must not be allowed.
+
+!= 0
+199.255.28.0011
+199.255.28.0011 is an invalid IP. It shouldn't match

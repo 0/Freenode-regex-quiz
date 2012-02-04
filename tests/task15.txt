@@ -14,7 +14,7 @@ Not matching 3start. The text 3end is optional.
 aaa sssstartttt bbb end
 Not matching 3aaa sssstartttt bbb end yet
 
-validate: "isin", "sssstartttt"
+validate: isin, sssstartttt
 You're not supposed to have 03sssstartttt in your expression. Try again.
 
 != 0
