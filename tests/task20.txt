@@ -1,12 +1,28 @@
 ; tokenized list
 ; task 20
 ; 2012-02-04
+; _C_ == Comma
 
-regml: one\,two\,three, 0 < 3
+regml: one_C_two_C_three, 0 < 3
 You're not setting the 3 backreferences from: one,two,three
 
-regml: one\,two\,three, 0 > 3
+regml: one_C_two_C_three, 0 > 3
 You're setting more than 3 backreferences from: one,two,three
 
-regml: one\, two \, three, 1 === one, 2 === two, 3 === three
+regml: one_C_ two _C_ three, 1 !== one, 2 !== two, 3 !== three
 You must ignore the spaces in: one, two , three
+
+regml: one_C_"two"_C_three, 1 !== one, 2 !== two, 3 !== three
+When an item is quoted, don't include the quotes in the backreference. The text: 3one,"two",three should set in backreferences: 6one; 6two and 6three
+
+regml: "item #1" _C_ "item #2" _C_ "item #3", 1 !== item #1, 2 !== item #2, 3 !== item #3
+When an item is quoted, don't include the quotes in the backreference. Your pattern fails on: 3"item #1" , "item #2" , "item #3"
+
+; more basic tests
+
+regml: "item_C_ with_C_ commas"_C_ "item 2", 1 !== item_C_ with_C_ commas, 2 !== item 2
+An item in quotes may have a comma inside. Example: 3"item, with, commas", "item 2". Read your solution to the task "Quoted Text With Escapes" again.
+
+!= 0
+"this_item,should,not,match
+If one item starts with a quote, it should be closed. And if there's an item with unbalanced quotes, your pattern should not match that item nor anything else from that point. For example, you shouldn't match: 3"this_item,should,not,match
