@@ -178,9 +178,10 @@ alias regexDist {
         if (%line != $null) {
           inc %testNum
           var %tests = $regsubex(%line, /^\s*(?:sub|regml|validate):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/g
+          %tests = $replace(%tests, \ $+ $chr(44), $chr(1234))
           if (regml: isin %line) {
             var %a = 2
-            noop $regex(regexDist, $trim($gettok(%tests,1,44)), $4)
+            noop $regex(regexDist, $trim($replace($gettok(%tests,1,44), $chr(1234), $chr(44))), $4)
             while ($trim($gettok(%tests, %a, 44))) {
               var %v1 = $v1, %regml = $regml(regexDist, $gettok(%v1, 1, 32)), $&
                 %regmlOp = $gettok(%v1, 2, 32), $&
