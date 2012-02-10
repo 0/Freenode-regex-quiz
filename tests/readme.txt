@@ -44,13 +44,13 @@ Use USER_INPUT as replacement (in quotes) if you want to use the users replaceme
 This function allows you to validate the regex using mirc built in comparator functions. Such as "isin", "iswm" etc etc.
 validate: comparator, comparison1, comparison2, ...., comparisonN
 real life example:
-validate: "!isin", "word", "word2"
+validate: !isin, word, word2
 This means word and word2 is not in your regex
 
 This gets translated to
-if (word !isin <your regex> || word2 !isin <your regex>) { display error }
+if (word !isin <your regex>) { display error }
+if (word2 !isin <your regex>) { display error }
 
 
 WARNING:
-These functions all use COMMA to separate things. You can not use it in your test strings. Yet.
-You can use $chr(44) if you want to use a comma in your strings. Like: test $+ $chr(44) => test,
+These functions all use COMMA to separate things. If you want to use a COMMA in your tests, use _C_.

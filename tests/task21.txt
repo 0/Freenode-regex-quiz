@@ -1,0 +1,42 @@
+; task 21: replace * inside even []
+; 2012-02-10
+
+[a*b]
+[ab]
+You could start by trying to replace 3[a*b] with 6[ab]
+
+[*]
+[]
+You could start by trying to replace 3[*] with 6[]
+
+***
+***
+Don't touch the string that don't fit the task description. 03*** should not match.
+
+hey*there
+hey*there
+Don't touch the string that don't fit the task description. 03abc*def should not match.
+
+[a*b]c[e*f]
+[ab]c[ef]
+Use the /g modifier! The /g modifier!! The /g modifier!!! (Do I need to repeat it one more time?)
+
+*bc[*bc]abc[*bc]abc[*bc]*bc
+*bc[bc]abc[bc]abc[bc]*bc
+Your pattern fails on: 3*bc[*bc]abc[*bc]abc[*bc]*bc. Try to return 6*bc[bc]abc[bc]abc[bc]*bc
+
+ab[a*b*a*b]ab[a*b]
+ab[abab]ab[ab]
+There can be several *'s inside each balanced bracket. Your expression should turn 03ab[a*b*a*b]ab[a*b] into 06ab[abab]ab[ab]
+
+[a**b]
+[ab]
+You need to be able to remove consecutive 03*'s inside 06[]'s.
+
+[a**b]asd[***]
+[ab]asd[]
+You need to be able to remove consecutive 03*'s inside 06[]'s.
+
+dont*]remove***this]but[*this*]
+dont*]remove***this]but[this]
+Remember that brackets are always balanced, however, there may be unbalanced 06]'s.
