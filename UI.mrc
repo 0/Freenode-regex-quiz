@@ -122,7 +122,13 @@ on $*:TEXT:/^!(commands|help|login|register|regexquiz|stop|submit|info|try|task|
       var %u = $iif($2 == -u,$3,$2), %t = $iif($2 == -u,$4,$3)
       if ($findUserFromHost($address($2,5)) || ($2 == -u && $isfile($+($regexDir,users\,$3,.ini)))) {
         var %f = $findUserFromHost($address($nick,5)), %q = $iif($2 == -u,$3,$findUserFromHost($address($2,5)))
-        %t = $replace($iif(%t isnum || %t == last,%t,last),last,$regexUser(%q,info,reached))
+        ;%t = $replace($iif(%t isnum || %t == last,%t,last),last,$regexUser(%q,info,reached))
+        if (%t !isnum) {
+          %t = $regexUser(%q,info,reached)
+          if (%t > $regexTasks) {
+            %t = $v2
+          }
+        }
         if ($regexUser(%f,info,reached) >= $regexUser(%q,info,reached)) {
           if ($regexUser(%f,task $+ %t,shortest)) {
             if ($regexUser(%q,task $+ %t,shortest)) {
@@ -274,7 +280,7 @@ alias -l regexQuiz {
   sendTimer $1 Other Commands: !task to read your current task again. !lasttry to see your last try in the current level. !mypatterns to see your solutions for each level. !submit <idea> if you have an idea for a new task or a comment. Or !help
   sendTimer $1 If you still need more help with regex syntax, ask in #regex @ Freenode. But, please, keep in mind that channel is for regex help. Quiz questions are considered spam there, and you'll be banned if you post a quiz solution.
   sendTimer $1 Good luck!
-  sendTimer $1 3Task 1 of $!regexTasks $+ : $+([,$regexTask(1,title),]) $!regexTask(1,description)
+  sendTimer $1 3Task 1 of $regexTasks $+ : $+([,$regexTask(1,title),]) $!regexTask(1,description)
 }
 alias findUserFromHost {
   var %a = 1

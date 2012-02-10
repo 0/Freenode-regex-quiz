@@ -3,13 +3,17 @@
 ; 2012-02-04
 ; _C_ == Comma
 
+> 3
+one,two,three
+Perhaps your pattern also matches a null string; matching more times than what it should. It returned more than 3 with the text: one,two,three
+
 regml: one_C_two_C_three, 0 < 3
 You're not setting the 3 backreferences from: one,two,three
 
 regml: one_C_two_C_three, 0 > 3
 You're setting more than 3 backreferences from: one,two,three
 
-regml: one_C_ two _C_ three, 1 !== one, 2 !== two, 3 !== three
+regml: one_C_ two $+ $chr(32) $+ $chr(32) $+ _C_ three, 1 !== one, 2 !== two, 3 !== three
 You must ignore the spaces in: one, two , three
 
 regml: one_C_"two"_C_three, 1 !== one, 2 !== two, 3 !== three
@@ -26,3 +30,29 @@ An item in quotes may have a comma inside. Example: 3"item, with, commas", "ite
 != 0
 "this_item,should,not,match
 If one item starts with a quote, it should be closed. And if there's an item with unbalanced quotes, your pattern should not match that item nor anything else from that point. For example, you shouldn't match: 3"this_item,should,not,match
+
+regml: a_C_b_C_"c_C_d_C_e, 0 != 2, 1 !== a, 2 !== b
+If one item starts with a quote, it should be closed. And if there's an item with unbalanced quotes, your pattern should not match that item nor anything else from that point. For example, you should only match the green items in: 03a,03b,"c,d,e
+
+regml: a_C_ b_C_ "c_C_ d_C_ e, 0 != 2, 1 !== a, 2 !== b
+If one item starts with a quote, it should be closed. And if there's an item with unbalanced quotes, your pattern should not match that item nor anything else from that point. For example, you should only match the green items in: 03a,03b, "c,d,e
+
+regml: "you should \"allow_C_ commas in \"quotes"_C_"for \\"\"real", 0 != 1, 1 !== you should \"allow_C_ commas in \"quotes
+Don't forget the rule set for quotes from Task 18...
+
+regml: this is item 1_C_"this is item 2"_C_cool, 1 !== this is item 1, 2 !== this is item 2, 3 !== cool
+What about spaces? You're not matching 03this is item 1, "this is item 2", cool properly.
+
+regml: "you should allow_C_ commas in quotes"_C_"for real", 1 !== you should allow_C_ commas in quotes, 2 !== for real
+What about commas inside quotes?
+
+;removed for now
+
+;regml: "hey"_C_"quote\\"here"_C_y\\"up,0 == 1,1 !== hey
+;If one item starts with a quote, it must be closed. And if there's an item with unbalanced quotes, your pattern should not match ;that item nor anything else from that point. Remember leading and trailing spaces should be ignored.
+
+;regml: "hey"_C_"quote\\"here"_C_y"up,0 == 1,1 !== hey
+;If one item starts with a quote, it must be closed. And if there's an item with unbalanced quotes, your pattern should not match ;that item nor anything else from that point. Remember leading and trailing spaces should be ignored.
+
+;regml: "hey"_C_"quote here"_C_y\\"up,0 == 1,1 !== hey
+;If one item starts with a quote, it must be closed. And if there's an item with unbalanced quotes, your pattern should not match ;that item nor anything else from that point. Remember leading and trailing spaces should be ignored.

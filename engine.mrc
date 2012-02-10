@@ -178,14 +178,21 @@ alias regexDist {
         if (%line != $null) {
           inc %testNum
           var %tests = $regsubex(%line, /^\s*(?:sub|regml|validate):\s*/i, ), %regexQuote = /\s*"((?>\\.|[^"])*)"\s*/g
-          %tests = $replace(%tests, \ $+ $chr(44), $chr(1234))
+          ;echo -a %tests
           if (regml: isin %line) {
             var %a = 2
-            noop $regex(regexDist, $trim($replace($gettok(%tests,1,44), $chr(1234), $chr(44))), $4)
+            if ($3 != 20) {
+              noop $regex(regexDist, $trim($replacecs($gettok(%tests,1,44), _C_, $chr(44))), $4)
+            }
+            else {
+              noop $regex(regexDist, $replacecs($eval($gettok(%tests,1,44), 2), _C_, $chr(44)), $4)
+            }
             while ($trim($gettok(%tests, %a, 44))) {
               var %v1 = $v1, %regml = $regml(regexDist, $gettok(%v1, 1, 32)), $&
                 %regmlOp = $gettok(%v1, 2, 32), $&
-                %equals = $gettok(%v1, 3-, 32)
+                %equals = $replacecs($gettok(%v1, 3-, 32),_C_,$chr(44))
+
+              ;  echo -a " $+ %regml $+ " %regmlOp " $+ %equals $+ "
               if (%regml %regmlOp %equals) {
                 %failure = $true
                 break
@@ -210,7 +217,7 @@ alias regexDist {
             var %a = 2, %comp = $trim($gettok(%tests,1,44))
             var %re = $replace($4, \/, /)
             while ($trim($gettok(%tests, %a, 44))) {
-              var %v1 = $trim($v1)
+              var %v1 = $replacecs($trim($v1),_C_,$chr(44))
               if (%v1 %comp %re) {
                 %failure = 1
               }

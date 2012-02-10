@@ -23,6 +23,30 @@ It's not replacing a line with 3micro repeated several times.
 sub: &micro;, &micro;, ==, &&micro;;
 If it only was this simple... You're matching 06micro inside of 03&micro; which results in the invalid output 03&&micro;;
 
+micro <test>
+&micro; <test>
+You're not replacing micro if there's a unrelated tag in the string...
+
+micro>
+&micro;>
+You're not replacing 03micro> with 03&micro;>
+
+micro;
+&micro;;
+You're not replacing 03micro; with 03&micro;;
+
+<micro
+<&micro;
+You're not replacing 03<micro with 03<&micro;
+
+&micro
+&&micro;
+You're not replacing 03&micro with 03&&micro;
+
+<test>&micro;micro
+<test>&micro;&micro;
+You're replacing &micro; with &&micro;;
+
 ;this test is not really complete
 <temicrost>&micro;micro micro<micro>
 <temicrost>&micro;&micro; &micro;<micro>
@@ -30,6 +54,10 @@ It's matching a tag and replacing "micro" after the tag. However, if the text do
 
 &asdmicroasd;
 &asdmicroasd;
+It's matching "micro" inside an entity.
+
+& lol micro wtf;
+& lol micro wtf;
 It's matching "micro" inside an entity.
 
 <lolmicrolol>
