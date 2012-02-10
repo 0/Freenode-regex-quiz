@@ -16,20 +16,6 @@ on $*:text:/(*UTF8)^[@.!] *(explain|regex) */Si:#: {
     }
   }
 }
-on $*:text:/(*UTF8)^[@.?!] *(\S+)/S:#: {
-  if ($regml(1) == babewatch) {
-    msg $chan babewatch: With 2(?=babe) you only see them when they are in front of you, with 2(?=.*babe) you'll even see them when they are far away and with 2(?<=babe) you'll see them when they are directly behind you.
-  }
-  if ($regex(loltard,$regml(1),/(*UTF8)(?:look(?:(?:ahead|behind|around)s?))/i)) {
-    msg $chan Regular Expressions Zero-Width Assertions (LookArounds: LookAheads & LookBehinds): 2Positive Lookahead (?=re) 2Negative Lookahead (?!re) 2Positive Lookbehind (?<=re) 2Negative Lookbehind (?<!re) 14Lookbehind must be fixed length (you cannot use quantifiers like ? * + or {m,n} for repetition).
-  }
-  if ($regml(1) == help) {
-    msg $chan commands: ? babewatch, ? look(?:ahead|behind|around)s?, !explain /regex/, !regex <text> /regex/, !regex <text> s/regex/replacement/, ? bug
-  }
-  if ($regml(1) == bug) {
-    msg $chan If you have a found a bug with one of the components, please save the data to a file so it can be reproduced and tell Lindrian about it as soon as he is around. Thank you. 
-  }
-}
 on $*:text:/(*UTF8)^[@.!] *(explain|regex(?!quiz)) */Si:?: {
   if ($regml(1) == explain) {
     if ($2) {
@@ -48,6 +34,20 @@ on $*:text:/(*UTF8)^[@.!] *(explain|regex(?!quiz)) */Si:?: {
     }
   }
 }
+;on $*:text:/(*UTF8)^[@.?!] *(\S+)/S:#: {
+;  if ($regml(1) == babewatch) {
+;    msg $chan babewatch: With 2(?=babe) you only see them when they are in front of you, with 2(?=.*babe) you'll even see them when they are far away and with 2(?<=babe) you'll see them when they are directly behind you.
+;  }
+;  if ($regex(loltard,$regml(1),/(*UTF8)(?:look(?:(?:ahead|behind|around)s?))/i)) {
+;    msg $chan Regular Expressions Zero-Width Assertions (LookArounds: LookAheads & LookBehinds): 2Positive Lookahead (?=re) 2Negative Lookahead (?!re) 2Positive Lookbehind (?<=re) 2Negative Lookbehind (?<!re) 14Lookbehind must be fixed length (you cannot use quantifiers like ? * + or {m,n} for repetition).
+;  }
+;  if ($regml(1) == help) {
+;    msg $chan commands: ? babewatch, ? look(?:ahead|behind|around)s?, !explain /regex/, !regex <text> /regex/, !regex <text> s/regex/replacement/, ? bug
+;  }
+;  if ($regml(1) == bug) {
+;    msg $chan If you have a found a bug with one of the components, please save the data to a file so it can be reproduced and tell Lindrian about it as soon as he is around. Thank you. 
+;  }
+;}
 on $*:text:/(*UTF8)^[@.?!] *(\S+)/S:?: {
   if ($regml(1) == babewatch) {
     msg $nick babewatch: With 2(?=babe) you only see them when they are in front of you, with 2(?=.*babe) you'll even see them when they are far away and with 2(?<=babe) you'll see them when they are directly behind you.
