@@ -37,7 +37,7 @@ If you want to check if a backref is null, use $null
 This function allows you run a substitution on a string.
 sub: text, replacement, comparator, output
 If you do not wish to specify replacement and use the user submitted one, use USER_INPUT. If you want to replace with nothing, leave the field empty
-Use USER_INPUT as replacement (in quotes) if you want to use the users replacement string.
+Use USER_INPUT as replacement if you want to use the users replacement string.
 
 
 * validate:
