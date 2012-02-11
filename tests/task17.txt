@@ -1,7 +1,19 @@
-1000
-1,000
-1000 -> 1,000
+777
+777
+Your regex should leave 06777 alone.
+
+123456
+123,456
+Try converting ^X06123456 to 06123,456.
 
 100013541615681651
 100,013,541,615,681,651
-100013541615681651 -> 100,013,541,615,681,651
+06100013541615681651 should become 06100,013,541,615,681,651. Did you forget 06/g?
+
+12345678
+12,345,678
+0612345678 should become 0612,345,678. Maybe you're putting commas in the wrong places?
+
+59384673 people have asked for help in #regex; only 1453 read the topic.
+59,384,673 people have asked for help in #regex; only 1,453 read the topic.
+Your regex isn't handling 0659384673 cups of tea and 1453 custom built sandwiches correctly.
