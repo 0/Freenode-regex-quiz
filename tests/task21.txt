@@ -17,9 +17,17 @@ hey*there
 hey*there
 Don't touch the string that don't fit the task description. 03abc*def should not match.
 
+
+sub: [a*b]c[e*f], USER_INPUT, ===, [ab]c[e*f]
+Use the /g modifier! The /g modifier!! The /g modifier!!! (Do I need to repeat it one more time?)
+
 [a*b]c[e*f]
 [ab]c[ef]
-Use the /g modifier! The /g modifier!! The /g modifier!!! (Do I need to repeat it one more time?)
+Your pattern fails on: 3[a*b]c[e*f]. Try to return 6[ab]c[ef]
+
+*bc[*bc]*bc
+*bc[bc]*bc
+Your pattern fails on: 3*bc[*bc]*bc. Try to return 6*bc[bc]*bc
 
 *bc[*bc]abc[*bc]abc[*bc]*bc
 *bc[bc]abc[bc]abc[bc]*bc

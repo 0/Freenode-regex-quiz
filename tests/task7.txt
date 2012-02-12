@@ -22,11 +22,11 @@ An IP-address is four sets of numbers in the range 060-06255 separated by do
 
 != 0
 12.34.56.78.90
-Only four groups of numbers are to be allowed.
+Only four groups of numbers are to be allowed. I suggest you read 12http://www.regular-expressions.info/anchors.html
 
 != 0
 12.34.56
-Must not allow fewer than four groups of numbers.
+Must not allow fewer than four groups of numbers. I suggest you read 12http://www.regular-expressions.info/anchors.html
 
 != 1
 0.0.0.0

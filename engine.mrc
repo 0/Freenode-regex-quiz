@@ -208,7 +208,7 @@ alias regexDist {
             }
             var %subComp = $trim($gettok(%tests,3,44))
             var %subEquals = $trim($gettok(%tests,4,44))
-            var %regsubex = $regsubex(regexDist, %subText, $4, %subRepl)
+            var %regsubex = $regsubex(regexDist, %subText, $4, [ [ %subRepl ] ])
             if (%regsubex %subComp %subEquals) {
               %failure = $true
             }

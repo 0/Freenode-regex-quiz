@@ -1,11 +1,17 @@
 ; outermost brackets
 ; 2012-02-11
 
+regml: (a + b), 0 !== 1
+You're setting too many backrefs from 6(a + b). Only use capturing groups where necessary.
+
 regml: (a + b), 0 !== 1, 1 !== (a + b)
 It's not even matching 6(a + b)
 
 regml: 2 + (x * (8 + b)) - (2 + 1), 0 != 2, 1 !== (x * (8 + b)), 2 !== (2 + 1)
 It's not working. Try with the example I gave you!
 
-regml: (a * (b + c) / d), 0 !== 2, 1 !== (a * (b + c) / d), 2 !== (b + c)
+regml: (a * (b + c) / d), 0 !== 1, 1 !== (a * (b + c) / d)
 It matches the example alright, but it's still wrong when applied to 6(a * (b + c) / d).
+
+regml: a + (b * (c - d) / (e + f) - g) * h, 0 !== 1, 1 !== (b * (c - d) / (e + f) - g)
+Almost done. But what if there are more than one set of parenthesis in a recursion? Like 3a + (b * (c - d) / (e + f) - g) * h

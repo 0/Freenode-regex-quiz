@@ -6,11 +6,11 @@ You should start by setting a backreference to store the data in.
 
 aaaaa
 aaa
-You should only remove strings that fit the task description. They are finite in length. For example, 03aaaaa should become 03aaa.
+You should only remove strings that fit the task description. They are finite in length. For example, 03aaaaa should become 06aaa.
 
 aaaaaa
 aa
-You're not replacing the strings according to the task description. For example, 03aaaaaa should become 03aa.
+You're not replacing the strings according to the task description. For example, 03aaaaaa should become 06aa.
 
 %%%aaabbbccczzzz!!!***
 %abczz!*

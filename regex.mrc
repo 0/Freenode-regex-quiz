@@ -389,7 +389,7 @@ alias -l regex.Explain {
       }
       elseif ( $regex(%token,/(*UTF8)^\(\?\|(.*)\)$/) ) {
         %refout %token Duplicate Subpattern Number Group %quant (every capturing group inside an alternation starts from the same numerical value)
-        %r = $regex.Explain.Recurse(%target,$regml(1),%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode)
+        %r = $regex.Explain.Recurse(%target,$regml(1),%lvl,%imode,%smode,%mmode,%xmode,%XXmode,%Umode,OMG)
       }
       elseif ( $regex(%token,/(*UTF8)^\(\?P?<([^>]++)>(.*)\)$/) ) {
         %refout %token Named group ' $+ $regml(1) $+ '
@@ -525,11 +525,11 @@ alias -l regex.Explain {
 }
 
 alias regex.Explain.Special.Escape {
-  noop $regex.Explain.Recurse($1 $+ _SPECIAL_ESCAPE,$2,$3,$4,$5,$6,$7,$8,$9)
+  noop $regex.Explain.Recurse($1 $+ _SPECIAL_ESCAPE,$2,$3,$4,$5,$6,$7,$8,$9,$10)
 }
 
 alias regex.Explain.Special.Literal {
-  noop $regex.Explain.Recurse($1 $+ _SPECIAL,$remove($2,\),$3,$4,$5,$6,$7,$8,$9)
+  noop $regex.Explain.Recurse($1 $+ _SPECIAL,$remove($2,\),$3,$4,$5,$6,$7,$8,$9,$10)
 }
 
 alias getCharClass {
@@ -619,7 +619,7 @@ alias highlightClasses {
   }
   returnex %newToken %msg
 }
-alias -l regex.Explain.Recurse { var %r = $regex.Explain($1,$2,$calc($3 + 1),$4,$5,$6,$7,$8,$9) }
+alias -l regex.Explain.Recurse { var %r = $regex.Explain($1,$2,$calc($3 + 1),$4,$5,$6,$7,$8,$9,$10) }
 alias -l regex.RefOut Return { regex.Hash.AddTree $1 $2 }
 alias -l regex.Hash.AddTree {
   var %regex.pat2 = $1, %text = $2-, %i = $hget(%regex.pat2,Tree.0)
